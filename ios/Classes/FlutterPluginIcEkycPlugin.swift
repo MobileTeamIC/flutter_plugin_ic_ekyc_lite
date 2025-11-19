@@ -114,7 +114,7 @@ public class FlutterPluginIcEkycPlugin: NSObject, FlutterPlugin {
         let isEnableGotIt = (args["is_enable_gotit"] as? Bool) ?? false
         let languageSdk = (args["language_sdk"] as? String) ?? ""
         let isShowLogo = (args["is_show_logo"] as? Bool) ?? false
-
+        let challengeCode = (args["challenge_code"] as? String) ?? ""
         
         ICEkycCamera.cameraDelegate = self
         ICEkycCamera.flowType = full
@@ -135,7 +135,7 @@ public class FlutterPluginIcEkycPlugin: NSObject, FlutterPlugin {
         ICEkycCamera.languageSdk = convertLanguageSdk(languageSdk)
         ICEkycCamera.isShowLogo = isShowLogo
         
-        ICEkycCamera.challengeCode = "INNOVATIONCENTER"
+        ICEkycCamera.challengeCode = challengeCode
         ICEkycCamera.cameraPositionForPortrait = PositionFront
         ICEkycCamera.isEnableScanQRCode = true
         
@@ -186,7 +186,7 @@ public class FlutterPluginIcEkycPlugin: NSObject, FlutterPlugin {
         let languageSdk = (args["language_sdk"] as? String) ?? ""
         let isShowLogo = (args["is_show_logo"] as? Bool) ?? false
         let isValidatePostcode = (args["is_validate_postcode"] as? Bool) ?? false
-
+        let challengeCode = (args["challenge_code"] as? String) ?? ""
         ICEkycCamera.cameraDelegate = self
         
         ICEkycCamera.accessToken = accessToken
@@ -203,7 +203,7 @@ public class FlutterPluginIcEkycPlugin: NSObject, FlutterPlugin {
         ICEkycCamera.languageSdk = convertLanguageSdk(languageSdk)
         ICEkycCamera.isShowLogo = isShowLogo
         
-        ICEkycCamera.challengeCode = "INNOVATIONCENTER"
+        ICEkycCamera.challengeCode = challengeCode
         ICEkycCamera.cameraPositionForPortrait = PositionFront
         ICEkycCamera.isEnableScanQRCode = true
         
@@ -254,6 +254,7 @@ public class FlutterPluginIcEkycPlugin: NSObject, FlutterPlugin {
         let languageSdk = (args["language_sdk"] as? String) ?? ""
         let isShowLogo = (args["is_show_logo"] as? Bool) ?? false
         let isValidatePostcode = (args["is_validate_postcode"] as? Bool) ?? false
+        let challengeCode = (args["challenge_code"] as? String) ?? ""
 
         ICEkycCamera.cameraDelegate = self
         ICEkycCamera.flowType = ocrFront
@@ -270,8 +271,8 @@ public class FlutterPluginIcEkycPlugin: NSObject, FlutterPlugin {
         ICEkycCamera.isEnableGotIt = isEnableGotIt
         ICEkycCamera.languageSdk = convertLanguageSdk(languageSdk)
         ICEkycCamera.isShowLogo = isShowLogo
-        
-        ICEkycCamera.challengeCode = "INNOVATIONCENTER"
+
+        ICEkycCamera.challengeCode = challengeCode
         ICEkycCamera.cameraPositionForPortrait = PositionFront
         ICEkycCamera.isEnableScanQRCode = true
         
@@ -325,7 +326,7 @@ public class FlutterPluginIcEkycPlugin: NSObject, FlutterPlugin {
         let languageSdk = (args["language_sdk"] as? String) ?? ""
         let isShowLogo = (args["is_show_logo"] as? Bool) ?? false
         let isValidatePostcode = (args["is_validate_postcode"] as? Bool) ?? false
-
+        let challengeCode = (args["challenge_code"] as? String) ?? ""
         ICEkycCamera.cameraDelegate = self
         ICEkycCamera.flowType = ocrBack
         
@@ -342,7 +343,7 @@ public class FlutterPluginIcEkycPlugin: NSObject, FlutterPlugin {
         ICEkycCamera.isEnableGotIt = isEnableGotIt
         ICEkycCamera.isShowLogo = isShowLogo
 
-        ICEkycCamera.challengeCode = "INNOVATIONCENTER"
+        ICEkycCamera.challengeCode = challengeCode
         ICEkycCamera.languageSdk = convertLanguageSdk(languageSdk)
         ICEkycCamera.cameraPositionForPortrait = PositionFront
         
@@ -395,7 +396,7 @@ public class FlutterPluginIcEkycPlugin: NSObject, FlutterPlugin {
         let isEnableGotIt = (args["is_enable_gotit"] as? Bool) ?? false
         let languageSdk = (args["language_sdk"] as? String) ?? ""
         let isShowLogo = (args["is_show_logo"] as? Bool) ?? false
-
+        let challengeCode = (args["challenge_code"] as? String) ?? ""
         ICEkycCamera.cameraDelegate = self
         ICEkycCamera.flowType = face
 
@@ -413,7 +414,7 @@ public class FlutterPluginIcEkycPlugin: NSObject, FlutterPlugin {
         ICEkycCamera.isEnableGotIt = isEnableGotIt
         ICEkycCamera.isShowLogo = isShowLogo
 
-        ICEkycCamera.challengeCode = "INNOVATIONCENTER"
+        ICEkycCamera.challengeCode = challengeCode
         ICEkycCamera.languageSdk = convertLanguageSdk(languageSdk)
         ICEkycCamera.cameraPositionForPortrait = PositionFront
 
@@ -453,7 +454,7 @@ public class FlutterPluginIcEkycPlugin: NSObject, FlutterPlugin {
         let isEnableGotIt = (args["is_enable_gotit"] as? Bool) ?? false
         let languageSdk = (args["language_sdk"] as? String) ?? ""
         let isShowLogo = (args["is_show_logo"] as? Bool) ?? false
-
+        let challengeCode = (args["challenge_code"] as? String) ?? ""
         ICEkycCamera.cameraDelegate = self
         ICEkycCamera.flowType = scanQR
 
@@ -464,7 +465,7 @@ public class FlutterPluginIcEkycPlugin: NSObject, FlutterPlugin {
         ICEkycCamera.isEnableGotIt = isEnableGotIt
         ICEkycCamera.isShowLogo = isShowLogo
 
-        ICEkycCamera.challengeCode = "INNOVATIONCENTER"
+        ICEkycCamera.challengeCode = challengeCode
         ICEkycCamera.languageSdk = convertLanguageSdk(languageSdk)
         ICEkycCamera.cameraPositionForPortrait = PositionFront
 

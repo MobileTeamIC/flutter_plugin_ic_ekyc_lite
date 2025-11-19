@@ -416,7 +416,10 @@ class FlutterPluginIcEkycPlugin : FlutterPlugin, ActivityAware ,MethodCallHandle
         )
 
         // Challenge code
-        intent.putExtra(KeyIntentConstants.CHALLENGE_CODE, "INNOVATIONCENTER")
+        intent.putExtra(
+            KeyIntentConstants.CHALLENGE_CODE, 
+            if (json.has("challenge_code")) json.getString("challenge_code") else ""
+        )
 
         // Ngôn ngữ sử dụng trong SDK
         // - VIETNAMESE: Tiếng Việt

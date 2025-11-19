@@ -1,13 +1,12 @@
 import 'enum_ekyc.dart';
 
-
 /// Configuration class for eKYC SDK parameters
 class EkycConfig {
   // Required authentication parameters
   final String accessToken;
   final String tokenId;
   final String tokenKey;
-  final DocumentType? documentType; 
+  final DocumentType? documentType;
   final ValidateDocumentType? validateDocumentType;
   final String? hashImageCompare;
 
@@ -25,6 +24,7 @@ class EkycConfig {
 
   // Additional configuration
   final String? changeBaseUrl;
+  final String? challengeCode;
   final LanguageSdk? languageSdk;
   final String? hashFrontOcr;
 
@@ -47,6 +47,7 @@ class EkycConfig {
     this.changeBaseUrl,
     this.languageSdk,
     this.hashFrontOcr,
+    this.challengeCode,
   });
 
   /// Convert to Map for method channel
@@ -70,6 +71,7 @@ class EkycConfig {
       'is_show_logo': isShowLogo,
       'hash_front_ocr': hashFrontOcr,
       'hash_image_compare': hashImageCompare,
+      'challenge_code': challengeCode,
     };
 
     // Add optional parameters only if they are not null
@@ -100,7 +102,7 @@ class EkycConfig {
     if (languageSdk != null) map['language_sdk'] = languageSdk!.name;
     if (hashFrontOcr != null) map['hash_front_ocr'] = hashFrontOcr!;
     if (hashImageCompare != null) map['hash_image_compare'] = hashImageCompare!;
-
+    if (challengeCode != null) map['challenge_code'] = challengeCode!;
     return map;
   }
 }
