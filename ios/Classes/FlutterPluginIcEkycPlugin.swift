@@ -208,6 +208,7 @@ public class FlutterPluginIcEkycPlugin: NSObject, FlutterPlugin {
         ICEkycCamera.isShowLogo = isShowLogo
         
         ICEkycCamera.challengeCode = challengeCode
+        ICEkycCamera.challengeCode = challengeCode
         ICEkycCamera.cameraPositionForPortrait = PositionFront
         ICEkycCamera.isEnableScanQRCode = isEnableScanQRCode
         ICEkycCamera.isTurnOffCallService = isTurnOffCallService
@@ -352,6 +353,7 @@ public class FlutterPluginIcEkycPlugin: NSObject, FlutterPlugin {
         ICEkycCamera.isShowLogo = isShowLogo
 
         ICEkycCamera.challengeCode = challengeCode
+        ICEkycCamera.challengeCode = challengeCode
         ICEkycCamera.languageSdk = convertLanguageSdk(languageSdk)
         ICEkycCamera.cameraPositionForPortrait = PositionFront
         ICEkycCamera.isEnableScanQRCode = isEnableScanQRCode
@@ -425,6 +427,7 @@ public class FlutterPluginIcEkycPlugin: NSObject, FlutterPlugin {
         ICEkycCamera.isShowLogo = isShowLogo
 
         ICEkycCamera.challengeCode = challengeCode
+        ICEkycCamera.challengeCode = challengeCode
         ICEkycCamera.languageSdk = convertLanguageSdk(languageSdk)
         ICEkycCamera.cameraPositionForPortrait = PositionFront
         ICEkycCamera.isEnableScanQRCode = isEnableScanQRCode
@@ -477,6 +480,7 @@ public class FlutterPluginIcEkycPlugin: NSObject, FlutterPlugin {
         ICEkycCamera.isEnableGotIt = isEnableGotIt
         ICEkycCamera.isShowLogo = isShowLogo
 
+        ICEkycCamera.challengeCode = challengeCode
         ICEkycCamera.challengeCode = challengeCode
         ICEkycCamera.languageSdk = convertLanguageSdk(languageSdk)
         ICEkycCamera.cameraPositionForPortrait = PositionFront
