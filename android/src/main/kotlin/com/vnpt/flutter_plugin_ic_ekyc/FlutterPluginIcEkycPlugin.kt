@@ -3,10 +3,12 @@ package com.vnpt.flutter_plugin_ic_ekyc
 import android.app.Activity
 import android.content.Intent
 import com.vnpt.flutter_plugin_ic_ekyc.JsonUtil
+import com.vnptit.idg.sdk.activity.VnptFrontActivity
 import com.vnptit.idg.sdk.activity.VnptIdentityActivity
 import com.vnptit.idg.sdk.activity.VnptOcrActivity
 import com.vnptit.idg.sdk.activity.VnptPortraitActivity
 import com.vnptit.idg.sdk.activity.VnptQRCodeActivity
+import com.vnptit.idg.sdk.activity.VnptRearActivity
 import com.vnptit.idg.sdk.utils.KeyIntentConstants
 import com.vnptit.idg.sdk.utils.KeyResultConstants
 import com.vnptit.idg.sdk.utils.SDKEnum
@@ -189,6 +191,7 @@ class FlutterPluginIcEkycPlugin : FlutterPlugin, ActivityAware ,MethodCallHandle
     ///   - is_show_logo: Bật/tắt hiển thị LOGO thương hiệu ("true"/"false")
     private fun Activity.getIntentEkycFull(json: JSONObject): Intent {
         val intent = getBaseIntent(VnptIdentityActivity::class.java, json)
+
         // document_type
         intent.putExtra(
             KeyIntentConstants.DOCUMENT_TYPE,
@@ -306,7 +309,7 @@ class FlutterPluginIcEkycPlugin : FlutterPlugin, ActivityAware ,MethodCallHandle
     ///   - language_sdk: Ngôn ngữ SDK ("icekyc_vi", "icekyc_en")
     ///   - is_show_logo: Bật/tắt hiển thị LOGO thương hiệu ("true"/"false")
     private fun Activity.getIntentEkycOcrFront(json: JSONObject): Intent {
-        val intent = getBaseIntent(VnptOcrActivity::class.java, json)
+        val intent = getBaseIntent(VnptFrontActivity::class.java, json)
 
         // document_type
         intent.putExtra(
@@ -350,7 +353,7 @@ class FlutterPluginIcEkycPlugin : FlutterPlugin, ActivityAware ,MethodCallHandle
     ///   - language_sdk: Ngôn ngữ SDK ("icekyc_vi", "icekyc_en")
     ///   - is_show_logo: Bật/tắt hiển thị LOGO thương hiệu ("true"/"false")
     private fun Activity.getIntentEkycOcrBack(json: JSONObject): Intent {
-        val intent = getBaseIntent(VnptOcrActivity::class.java, json)
+        val intent = getBaseIntent(VnptRearActivity::class.java, json)
 
         // document_type
         intent.putExtra(
@@ -416,7 +419,9 @@ class FlutterPluginIcEkycPlugin : FlutterPlugin, ActivityAware ,MethodCallHandle
         )
 
         // Challenge code
-        intent.putExtra(KeyIntentConstants.CHALLENGE_CODE, "INNOVATIONCENTER")
+        intent.putExtra(
+            KeyIntentConstants.CHALLENGE_CODE,
+            if (json.has("challenge_code")) json.getString("challenge_code") else "")
 
         // Ngôn ngữ sử dụng trong SDK
         // - VIETNAMESE: Tiếng Việt
@@ -434,6 +439,17 @@ class FlutterPluginIcEkycPlugin : FlutterPlugin, ActivityAware ,MethodCallHandle
 
         // is_show_logo
         intent.putExtra(KeyIntentConstants.IS_SHOW_LOGO, json.optBoolean("is_show_logo", true))
+
+
+        intent.putExtra(
+            KeyIntentConstants.IS_ENABLE_SCAN_QRCODE,
+            json.optBoolean("is_enable_scan_qrcode", true)
+        )
+
+        intent.putExtra(
+            KeyIntentConstants.IS_TURN_OFF_CALL_SERVICE,
+            json.optBoolean("is_turn_off_call_service", true)
+        )
 
         // Camera front for portrait
         intent.putExtra(

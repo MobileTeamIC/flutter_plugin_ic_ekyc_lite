@@ -98,24 +98,26 @@ public class FlutterPluginIcEkycPlugin: NSObject, FlutterPlugin {
     func startEkycFull(_ controller: UIViewController, args: [String: Any]) {
         let ICEkycCamera = ICEkycCameraRouter.createModule() as! ICEkycCameraViewController
 
-        let accessToken = (args["access_token"] as? String) ?? ""
-        let tokenId = (args["token_id"] as? String) ?? ""
-        let tokenKey = (args["token_key"] as? String) ?? ""
-        let versionSdk = (args["version_sdk"] as? String) ?? ""
-        let documentType = (args["document_type"] as? String) ?? ""
-        let isShowTutorial = (args["is_show_tutorial"] as? Bool) ?? false
-        let isEnableCompare = (args["is_enable_compare"] as? Bool) ?? false
-        let isCheckMaskedFace = (args["is_check_masked_face"] as? Bool) ?? false
-        let checkLivenessFace = (args["check_liveness_face"] as? String) ?? ""
-        let isCheckLivenessCard = (args["is_check_liveness_card"] as? Bool) ?? false
-        let isValidatePostcode = (args["is_validate_postcode"] as? Bool) ?? false
-        let validateDocumentType = (args["validate_document_type"] as? String) ?? ""
-        let changeBaseUrl = (args["change_base_url"] as? String) ?? ""
-        let isEnableGotIt = (args["is_enable_gotit"] as? Bool) ?? false
-        let languageSdk = (args["language_sdk"] as? String) ?? ""
-        let isShowLogo = (args["is_show_logo"] as? Bool) ?? false
+        let accessToken = (args[KeyArgumentMethod.accessToken] as? String) ?? ""
+        let tokenId = (args[KeyArgumentMethod.tokenId] as? String) ?? ""
+        let tokenKey = (args[KeyArgumentMethod.tokenKey] as? String) ?? ""
+        let versionSdk = (args[KeyArgumentMethod.versionSdk] as? String) ?? ""
+        let documentType = (args[KeyArgumentMethod.documentType] as? String) ?? ""
+        let isShowTutorial = (args[KeyArgumentMethod.isShowTutorial] as? Bool) ?? false
+        let isEnableCompare = (args[KeyArgumentMethod.isEnableCompare] as? Bool) ?? false
+        let isCheckMaskedFace = (args[KeyArgumentMethod.isCheckMaskedFace] as? Bool) ?? false
+        let checkLivenessFace = (args[KeyArgumentMethod.checkLivenessFace] as? String) ?? ""
+        let isCheckLivenessCard = (args[KeyArgumentMethod.isCheckLivenessCard] as? Bool) ?? false
+        let isValidatePostcode = (args[KeyArgumentMethod.isValidatePostcode] as? Bool) ?? false
+        let validateDocumentType = (args[KeyArgumentMethod.validateDocumentType] as? String) ?? ""
+        let changeBaseUrl = (args[KeyArgumentMethod.changeBaseUrl] as? String) ?? ""
+        let isEnableGotIt = (args[KeyArgumentMethod.isEnableGotIt] as? Bool) ?? false
+        let languageSdk = (args[KeyArgumentMethod.languageSdk] as? String) ?? ""
+        let isShowLogo = (args[KeyArgumentMethod.isShowLogo] as? Bool) ?? false
+        let challengeCode = (args[KeyArgumentMethod.challengeCode] as? String) ?? ""
+        let isEnableScanQRCode = (args[KeyArgumentMethod.isEnableScanQRCode] as? Bool) ?? false
+        let isTurnOffCallService = (args[KeyArgumentMethod.isTurnOffCallService] as? Bool) ?? true
 
-        
         ICEkycCamera.cameraDelegate = self
         ICEkycCamera.flowType = full
         ICEkycCamera.accessToken = accessToken
@@ -134,10 +136,10 @@ public class FlutterPluginIcEkycPlugin: NSObject, FlutterPlugin {
         ICEkycCamera.isEnableGotIt = isEnableGotIt
         ICEkycCamera.languageSdk = convertLanguageSdk(languageSdk)
         ICEkycCamera.isShowLogo = isShowLogo
-        
-        ICEkycCamera.challengeCode = "INNOVATIONCENTER"
+        ICEkycCamera.isTurnOffCallService = isTurnOffCallService
+        ICEkycCamera.challengeCode = challengeCode
         ICEkycCamera.cameraPositionForPortrait = PositionFront
-        ICEkycCamera.isEnableScanQRCode = true
+        ICEkycCamera.isEnableScanQRCode = isEnableScanQRCode
         
         DispatchQueue.main.async {
             ICEkycCamera.modalTransitionStyle = .coverVertical
@@ -174,19 +176,21 @@ public class FlutterPluginIcEkycPlugin: NSObject, FlutterPlugin {
     func startEkycOcr(_ controller: UIViewController, args: [String: Any]) {
         let ICEkycCamera = ICEkycCameraRouter.createModule() as! ICEkycCameraViewController
 
-        let accessToken = (args["access_token"] as? String) ?? ""
-        let tokenId = (args["token_id"] as? String) ?? ""
-        let tokenKey = (args["token_key"] as? String) ?? ""
-        let documentType = (args["document_type"] as? String) ?? ""
-        let isShowTutorial = (args["is_show_tutorial"] as? Bool) ?? false
-        let isCheckLivenessCard = (args["is_check_liveness_card"] as? Bool) ?? false
-        let validateDocumentType = (args["validate_document_type"] as? String) ?? ""
-        let changeBaseUrl = (args["change_base_url"] as? String) ?? ""
-        let isEnableGotIt = (args["is_enable_gotit"] as? Bool) ?? false
-        let languageSdk = (args["language_sdk"] as? String) ?? ""
-        let isShowLogo = (args["is_show_logo"] as? Bool) ?? false
-        let isValidatePostcode = (args["is_validate_postcode"] as? Bool) ?? false
-
+        let accessToken = (args[KeyArgumentMethod.accessToken] as? String) ?? ""
+        let tokenId = (args[KeyArgumentMethod.tokenId] as? String) ?? ""
+        let tokenKey = (args[KeyArgumentMethod.tokenKey] as? String) ?? ""
+        let documentType = (args[KeyArgumentMethod.documentType] as? String) ?? ""
+        let isShowTutorial = (args[KeyArgumentMethod.isShowTutorial] as? Bool) ?? false
+        let isCheckLivenessCard = (args[KeyArgumentMethod.isCheckLivenessCard] as? Bool) ?? false
+        let validateDocumentType = (args[KeyArgumentMethod.validateDocumentType] as? String) ?? ""
+        let changeBaseUrl = (args[KeyArgumentMethod.changeBaseUrl] as? String) ?? ""
+        let isEnableGotIt = (args[KeyArgumentMethod.isEnableGotIt] as? Bool) ?? false
+        let languageSdk = (args[KeyArgumentMethod.languageSdk] as? String) ?? ""
+        let isShowLogo = (args[KeyArgumentMethod.isShowLogo] as? Bool) ?? false
+        let isValidatePostcode = (args[KeyArgumentMethod.isValidatePostcode] as? Bool) ?? false
+        let isTurnOffCallService = (args[KeyArgumentMethod.isTurnOffCallService] as? Bool) ?? true
+        let challengeCode = (args[KeyArgumentMethod.challengeCode] as? String) ?? ""
+        let isEnableScanQRCode = (args[KeyArgumentMethod.isEnableScanQRCode] as? Bool) ?? false
         ICEkycCamera.cameraDelegate = self
         
         ICEkycCamera.accessToken = accessToken
@@ -203,9 +207,10 @@ public class FlutterPluginIcEkycPlugin: NSObject, FlutterPlugin {
         ICEkycCamera.languageSdk = convertLanguageSdk(languageSdk)
         ICEkycCamera.isShowLogo = isShowLogo
         
-        ICEkycCamera.challengeCode = "INNOVATIONCENTER"
+        ICEkycCamera.challengeCode = challengeCode
         ICEkycCamera.cameraPositionForPortrait = PositionFront
-        ICEkycCamera.isEnableScanQRCode = true
+        ICEkycCamera.isEnableScanQRCode = isEnableScanQRCode
+        ICEkycCamera.isTurnOffCallService = isTurnOffCallService
         
         DispatchQueue.main.async {
             ICEkycCamera.modalTransitionStyle = .coverVertical
@@ -242,19 +247,22 @@ public class FlutterPluginIcEkycPlugin: NSObject, FlutterPlugin {
     func startEkycOcrFront(_ controller: UIViewController, args: [String: Any]) {
         let ICEkycCamera = ICEkycCameraRouter.createModule() as! ICEkycCameraViewController
 
-        let accessToken = (args["access_token"] as? String) ?? ""
-        let tokenId = (args["token_id"] as? String) ?? ""
-        let tokenKey = (args["token_key"] as? String) ?? ""
-        let documentType = (args["document_type"] as? String) ?? ""
-        let isShowTutorial = (args["is_show_tutorial"] as? Bool) ?? false
-        let isCheckLivenessCard = (args["is_check_liveness_card"] as? Bool) ?? false
-        let validateDocumentType = (args["validate_document_type"] as? String) ?? ""
-        let changeBaseUrl = (args["change_base_url"] as? String) ?? ""
-        let isEnableGotIt = (args["is_enable_gotit"] as? Bool) ?? false
-        let languageSdk = (args["language_sdk"] as? String) ?? ""
-        let isShowLogo = (args["is_show_logo"] as? Bool) ?? false
-        let isValidatePostcode = (args["is_validate_postcode"] as? Bool) ?? false
-
+        let accessToken = (args[KeyArgumentMethod.accessToken] as? String) ?? ""
+        let tokenId = (args[KeyArgumentMethod.tokenId] as? String) ?? ""
+        let tokenKey = (args[KeyArgumentMethod.tokenKey] as? String) ?? ""
+        let documentType = (args[KeyArgumentMethod.documentType] as? String) ?? ""
+        let isShowTutorial = (args[KeyArgumentMethod.isShowTutorial] as? Bool) ?? false
+        let isCheckLivenessCard = (args[KeyArgumentMethod.isCheckLivenessCard] as? Bool) ?? false
+        let validateDocumentType = (args[KeyArgumentMethod.validateDocumentType] as? String) ?? ""
+        let changeBaseUrl = (args[KeyArgumentMethod.changeBaseUrl] as? String) ?? ""
+        let isEnableGotIt = (args[KeyArgumentMethod.isEnableGotIt] as? Bool) ?? false
+        let languageSdk = (args[KeyArgumentMethod.languageSdk] as? String) ?? ""
+        let isShowLogo = (args[KeyArgumentMethod.isShowLogo] as? Bool) ?? false
+        let isValidatePostcode = (args[KeyArgumentMethod.isValidatePostcode] as? Bool) ?? false
+        let isTurnOffCallService = (args[KeyArgumentMethod.isTurnOffCallService] as? Bool) ?? true
+        let challengeCode = (args[KeyArgumentMethod.challengeCode] as? String) ?? ""
+        let isEnableScanQRCode = (args[KeyArgumentMethod.isEnableScanQRCode] as? Bool) ?? false
+        
         ICEkycCamera.cameraDelegate = self
         ICEkycCamera.flowType = ocrFront
         
@@ -271,9 +279,10 @@ public class FlutterPluginIcEkycPlugin: NSObject, FlutterPlugin {
         ICEkycCamera.languageSdk = convertLanguageSdk(languageSdk)
         ICEkycCamera.isShowLogo = isShowLogo
         
-        ICEkycCamera.challengeCode = "INNOVATIONCENTER"
+        ICEkycCamera.challengeCode = challengeCode
         ICEkycCamera.cameraPositionForPortrait = PositionFront
-        ICEkycCamera.isEnableScanQRCode = true
+        ICEkycCamera.isEnableScanQRCode = isEnableScanQRCode
+        ICEkycCamera.isTurnOffCallService = isTurnOffCallService
         
         DispatchQueue.main.async {
             ICEkycCamera.modalTransitionStyle = .coverVertical
@@ -291,13 +300,11 @@ public class FlutterPluginIcEkycPlugin: NSObject, FlutterPlugin {
     /// - Parameters:
     ///   - controller: Root view controller để present eKYC SDK
     ///   - info: Dictionary chứa các thông số cấu hình eKYC
-    /// 
-    /// - Required Parameters (info):
+    ///
     ///   - access_token: Mã truy cập từ eKYC admin dashboard
     ///   - token_id: Token ID từ eKYC admin dashboard
     ///   - token_key: Token key từ eKYC admin dashboard
-    /// 
-    /// - Optional Parameters (info):
+    ///
     ///   - flow_type: Loại luồng thực hiện ("ocrback", "none", "scanqr", "ocrfront", "ocr", "full", "face")
     ///   - document_type: Loại giấy tờ ("identitycard", "idcardchipbased", "passport", "driverlicense", "militaryidcard")
     ///   - is_show_tutorial: Hiển thị màn hình hướng dẫn ("true"/"false")
@@ -312,20 +319,22 @@ public class FlutterPluginIcEkycPlugin: NSObject, FlutterPlugin {
     func startEkycOcrBack(_ controller: UIViewController, args: [String: Any]) {
         let ICEkycCamera = ICEkycCameraRouter.createModule() as! ICEkycCameraViewController
         
-        let accessToken = (args["access_token"] as? String) ?? ""
-        let tokenId = (args["token_id"] as? String) ?? ""
-        let tokenKey = (args["token_key"] as? String) ?? ""
-        let documentType = (args["document_type"] as? String) ?? ""
-        let isShowTutorial = (args["is_show_tutorial"] as? Bool) ?? false
-        let hashFrontOCR = (args["hash_front_ocr"] as? String) ?? ""
-        let isCheckLivenessCard = (args["is_check_liveness_card"] as? Bool) ?? false
-        let validateDocumentType = (args["validate_document_type"] as? String) ?? ""
-        let changeBaseUrl = (args["change_base_url"] as? String) ?? ""
-        let isEnableGotIt = (args["is_enable_gotit"] as? Bool) ?? false
-        let languageSdk = (args["language_sdk"] as? String) ?? ""
-        let isShowLogo = (args["is_show_logo"] as? Bool) ?? false
-        let isValidatePostcode = (args["is_validate_postcode"] as? Bool) ?? false
-
+        let accessToken = (args[KeyArgumentMethod.accessToken] as? String) ?? ""
+        let tokenId = (args[KeyArgumentMethod.tokenId] as? String) ?? ""
+        let tokenKey = (args[KeyArgumentMethod.tokenKey] as? String) ?? ""
+        let documentType = (args[KeyArgumentMethod.documentType] as? String) ?? ""
+        let isShowTutorial = (args[KeyArgumentMethod.isShowTutorial] as? Bool) ?? false
+        let hashFrontOCR = (args[KeyArgumentMethod.hashFrontOCR] as? String) ?? ""
+        let isCheckLivenessCard = (args[KeyArgumentMethod.isCheckLivenessCard] as? Bool) ?? false
+        let validateDocumentType = (args[KeyArgumentMethod.validateDocumentType] as? String) ?? ""
+        let changeBaseUrl = (args[KeyArgumentMethod.changeBaseUrl] as? String) ?? ""
+        let isEnableGotIt = (args[KeyArgumentMethod.isEnableGotIt] as? Bool) ?? false
+        let languageSdk = (args[KeyArgumentMethod.languageSdk] as? String) ?? ""
+        let isShowLogo = (args[KeyArgumentMethod.isShowLogo] as? Bool) ?? false
+        let isValidatePostcode = (args[KeyArgumentMethod.isValidatePostcode] as? Bool) ?? false
+        let isTurnOffCallService = (args[KeyArgumentMethod.isTurnOffCallService] as? Bool) ?? true
+        let challengeCode = (args[KeyArgumentMethod.challengeCode] as? String) ?? ""
+        let isEnableScanQRCode = (args[KeyArgumentMethod.isEnableScanQRCode] as? Bool) ?? false
         ICEkycCamera.cameraDelegate = self
         ICEkycCamera.flowType = ocrBack
         
@@ -342,9 +351,11 @@ public class FlutterPluginIcEkycPlugin: NSObject, FlutterPlugin {
         ICEkycCamera.isEnableGotIt = isEnableGotIt
         ICEkycCamera.isShowLogo = isShowLogo
 
-        ICEkycCamera.challengeCode = "INNOVATIONCENTER"
+        ICEkycCamera.challengeCode = challengeCode
         ICEkycCamera.languageSdk = convertLanguageSdk(languageSdk)
         ICEkycCamera.cameraPositionForPortrait = PositionFront
+        ICEkycCamera.isEnableScanQRCode = isEnableScanQRCode
+        ICEkycCamera.isTurnOffCallService = isTurnOffCallService
         
         DispatchQueue.main.async {
             ICEkycCamera.modalTransitionStyle = .coverVertical
@@ -362,13 +373,11 @@ public class FlutterPluginIcEkycPlugin: NSObject, FlutterPlugin {
     /// - Parameters:
     ///   - controller: Root view controller để present eKYC SDK
     ///   - info: Dictionary chứa các thông số cấu hình eKYC
-    /// 
-    /// - Required Parameters (info):
+    ///
     ///   - access_token: Mã truy cập từ eKYC admin dashboard
     ///   - token_id: Token ID từ eKYC admin dashboard
     ///   - token_key: Token key từ eKYC admin dashboard
-    /// 
-    /// - Optional Parameters (info):
+    ///
     ///   - flow_type: Loại luồng thực hiện ("face", "none", "scanqr", "ocrfront", "ocrback", "ocr", "full")
     ///   - version_sdk: Phiên bản SDK cho chụp ảnh chân dung ("normal", "prooval")
     ///   - is_show_tutorial: Hiển thị màn hình hướng dẫn ("true"/"false")
@@ -382,20 +391,22 @@ public class FlutterPluginIcEkycPlugin: NSObject, FlutterPlugin {
     func startEkycFace(_ controller: UIViewController, args: [String: Any]) {
         let ICEkycCamera = ICEkycCameraRouter.createModule() as! ICEkycCameraViewController
         
-        let accessToken = (args["access_token"] as? String) ?? ""
-        let tokenId = (args["token_id"] as? String) ?? ""
-        let tokenKey = (args["token_key"] as? String) ?? ""
-        let versionSdk = (args["version_sdk"] as? String) ?? ""
-        let hashImageCompare = (args["hash_image_compare"] as? String) ?? ""
-        let isShowTutorial = (args["is_show_tutorial"] as? Bool) ?? false
-        let isEnableCompare = (args["is_enable_compare"] as? Bool) ?? false
-        let isCheckMaskedFace = (args["is_check_masked_face"] as? Bool) ?? false
-        let checkLivenessFace = (args["check_liveness_face"] as? String) ?? ""
-        let changeBaseUrl = (args["change_base_url"] as? String) ?? ""
-        let isEnableGotIt = (args["is_enable_gotit"] as? Bool) ?? false
-        let languageSdk = (args["language_sdk"] as? String) ?? ""
-        let isShowLogo = (args["is_show_logo"] as? Bool) ?? false
-
+        let accessToken = (args[KeyArgumentMethod.accessToken] as? String) ?? ""
+        let tokenId = (args[KeyArgumentMethod.tokenId] as? String) ?? ""
+        let tokenKey = (args[KeyArgumentMethod.tokenKey] as? String) ?? ""
+        let versionSdk = (args[KeyArgumentMethod.versionSdk] as? String) ?? ""
+        let hashImageCompare = (args[KeyArgumentMethod.hashImageCompare] as? String) ?? ""
+        let isShowTutorial = (args[KeyArgumentMethod.isShowTutorial] as? Bool) ?? false
+        let isEnableCompare = (args[KeyArgumentMethod.isEnableCompare] as? Bool) ?? false
+        let isCheckMaskedFace = (args[KeyArgumentMethod.isCheckMaskedFace] as? Bool) ?? false
+        let checkLivenessFace = (args[KeyArgumentMethod.checkLivenessFace] as? String) ?? ""
+        let changeBaseUrl = (args[KeyArgumentMethod.changeBaseUrl] as? String) ?? ""
+        let isEnableGotIt = (args[KeyArgumentMethod.isEnableGotIt] as? Bool) ?? false
+        let languageSdk = (args[KeyArgumentMethod.languageSdk] as? String) ?? ""
+        let isShowLogo = (args[KeyArgumentMethod.isShowLogo] as? Bool) ?? false
+        let isTurnOffCallService = (args[KeyArgumentMethod.isTurnOffCallService] as? Bool) ?? false
+        let challengeCode = (args[KeyArgumentMethod.challengeCode] as? String) ?? ""
+        let isEnableScanQRCode = (args[KeyArgumentMethod.isEnableScanQRCode] as? Bool) ?? false
         ICEkycCamera.cameraDelegate = self
         ICEkycCamera.flowType = face
 
@@ -413,10 +424,11 @@ public class FlutterPluginIcEkycPlugin: NSObject, FlutterPlugin {
         ICEkycCamera.isEnableGotIt = isEnableGotIt
         ICEkycCamera.isShowLogo = isShowLogo
 
-        ICEkycCamera.challengeCode = "INNOVATIONCENTER"
+        ICEkycCamera.challengeCode = challengeCode
         ICEkycCamera.languageSdk = convertLanguageSdk(languageSdk)
         ICEkycCamera.cameraPositionForPortrait = PositionFront
-
+        ICEkycCamera.isEnableScanQRCode = isEnableScanQRCode
+        ICEkycCamera.isTurnOffCallService = isTurnOffCallService
         DispatchQueue.main.async {
             ICEkycCamera.modalTransitionStyle = .coverVertical
             ICEkycCamera.modalPresentationStyle = .fullScreen
@@ -432,13 +444,11 @@ public class FlutterPluginIcEkycPlugin: NSObject, FlutterPlugin {
     /// - Parameters:
     ///   - controller: Root view controller để present eKYC SDK
     ///   - info: Dictionary chứa các thông số cấu hình eKYC
-    /// 
-    /// - Required Parameters (info):
+    ///
     ///   - access_token: Mã truy cập từ eKYC admin dashboard
     ///   - token_id: Token ID từ eKYC admin dashboard
     ///   - token_key: Token key từ eKYC admin dashboard
-    /// 
-    /// - Optional Parameters (info):
+    ///
     ///   - is_show_tutorial: Hiển thị màn hình hướng dẫn ("true"/"false")
     ///   - is_enable_gotit: Bật/tắt nút "Bỏ qua hướng dẫn" ("true"/"false")
     ///   - language_sdk: Ngôn ngữ SDK ("icekyc_vi", "icekyc_en")
@@ -446,13 +456,16 @@ public class FlutterPluginIcEkycPlugin: NSObject, FlutterPlugin {
     func startEkycScanQRCode(_ controller: UIViewController, args: [String: Any]) {
         let ICEkycCamera = ICEkycCameraRouter.createModule() as! ICEkycCameraViewController
         
-        let accessToken = (args["access_token"] as? String) ?? ""
-        let tokenId = (args["token_id"] as? String) ?? ""
-        let tokenKey = (args["token_key"] as? String) ?? ""
-        let isShowTutorial = (args["is_show_tutorial"] as? Bool) ?? false
-        let isEnableGotIt = (args["is_enable_gotit"] as? Bool) ?? false
-        let languageSdk = (args["language_sdk"] as? String) ?? ""
-        let isShowLogo = (args["is_show_logo"] as? Bool) ?? false
+        let accessToken = (args[KeyArgumentMethod.accessToken] as? String) ?? ""
+        let tokenId = (args[KeyArgumentMethod.tokenId] as? String) ?? ""
+        let tokenKey = (args[KeyArgumentMethod.tokenKey] as? String) ?? ""
+        let isShowTutorial = (args[KeyArgumentMethod.isShowTutorial] as? Bool) ?? false
+        let isEnableGotIt = (args[KeyArgumentMethod.isEnableGotIt] as? Bool) ?? false
+        let languageSdk = (args[KeyArgumentMethod.languageSdk] as? String) ?? ""
+        let isShowLogo = (args[KeyArgumentMethod.isShowLogo] as? Bool) ?? false
+        let isTurnOffCallService = (args[KeyArgumentMethod.isTurnOffCallService] as? Bool) ?? true
+        let challengeCode = (args[KeyArgumentMethod.challengeCode] as? String) ?? ""
+        let isEnableScanQRCode = (args[KeyArgumentMethod.isEnableScanQRCode] as? Bool) ?? false
 
         ICEkycCamera.cameraDelegate = self
         ICEkycCamera.flowType = scanQR
@@ -464,9 +477,11 @@ public class FlutterPluginIcEkycPlugin: NSObject, FlutterPlugin {
         ICEkycCamera.isEnableGotIt = isEnableGotIt
         ICEkycCamera.isShowLogo = isShowLogo
 
-        ICEkycCamera.challengeCode = "INNOVATIONCENTER"
+        ICEkycCamera.challengeCode = challengeCode
         ICEkycCamera.languageSdk = convertLanguageSdk(languageSdk)
         ICEkycCamera.cameraPositionForPortrait = PositionFront
+        ICEkycCamera.isEnableScanQRCode = isEnableScanQRCode
+        ICEkycCamera.isTurnOffCallService = isTurnOffCallService
 
         DispatchQueue.main.async {
             ICEkycCamera.modalTransitionStyle = .coverVertical
@@ -584,12 +599,12 @@ extension FlutterPluginIcEkycPlugin: ICEkycCameraDelegate {
         let clientSessionResult = ICEKYCSavedData.shared().clientSessionResult;
         
         let dict: [String: Any] = [
-            "CROP_PARAM": cropParam,
-            "PATH_IMAGE_FRONT_FULL": pathImageFrontFull.path,
-            "PATH_IMAGE_BACK_FULL": pathImageBackFull.path,
-            "PATH_IMAGE_FACE_FULL": pathImageFaceFull.path ,
-            "PATH_IMAGE_FACE_FAR_FULL": pathImageFaceFarFull.path,
-            "CLIENT_SESSION_RESULT": clientSessionResult
+            KeyResultConstantsNFC.cropParam: cropParam,
+            KeyResultConstantsNFC.pathImageFrontFull: pathImageFrontFull.path,
+            KeyResultConstantsNFC.pathImageBackFull: pathImageBackFull.path,
+            KeyResultConstantsNFC.pathImageFaceFull: pathImageFaceFull.path ,
+            KeyResultConstantsNFC.pathImageFaceFarFull: pathImageFaceFarFull.path,
+            KeyResultConstantsNFC.clientSessionResult: clientSessionResult
         ]
         
         do {

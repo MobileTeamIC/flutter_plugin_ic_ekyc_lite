@@ -22,6 +22,9 @@ class EkycConfig {
   final bool? isValidatePostcode;
   final bool? isEnableGotIt;
   final bool? isShowLogo;
+  final bool? isTurnOffCallService;
+  final bool? isEnableScanQRCode;
+  final bool? isShowQRCodeResult;
 
   // Additional configuration
   final String? changeBaseUrl;
@@ -47,6 +50,9 @@ class EkycConfig {
     this.changeBaseUrl,
     this.languageSdk,
     this.hashFrontOcr,
+    this.isTurnOffCallService,
+    this.isEnableScanQRCode,
+    this.isShowQRCodeResult,
   });
 
   /// Convert to Map for method channel
@@ -70,6 +76,9 @@ class EkycConfig {
       'is_show_logo': isShowLogo,
       'hash_front_ocr': hashFrontOcr,
       'hash_image_compare': hashImageCompare,
+      'is_turn_off_call_service': isTurnOffCallService,
+      'is_enable_scan_qrcode': isEnableScanQRCode,
+      'is_show_qrcode_result': isShowQRCodeResult,
     };
 
     // Add optional parameters only if they are not null
@@ -81,7 +90,6 @@ class EkycConfig {
     if (checkLivenessFace != null) {
       map['check_liveness_face'] = checkLivenessFace!.name;
     }
-
     if (isShowTutorial != null) map['is_show_tutorial'] = isShowTutorial;
     if (isEnableCompare != null) map['is_enable_compare'] = isEnableCompare;
     if (isCheckMaskedFace != null) {
@@ -95,7 +103,9 @@ class EkycConfig {
     }
     if (isEnableGotIt != null) map['is_enable_gotit'] = isEnableGotIt;
     if (isShowLogo != null) map['is_show_logo'] = isShowLogo;
-
+    if (isTurnOffCallService != null) map['is_turn_off_call_service'] = isTurnOffCallService;
+    if (isEnableScanQRCode != null) map['is_enable_scan_qrcode'] = isEnableScanQRCode;
+    if (isShowQRCodeResult != null) map['is_show_qrcode_result'] = isShowQRCodeResult;
     if (changeBaseUrl != null) map['change_base_url'] = changeBaseUrl!;
     if (languageSdk != null) map['language_sdk'] = languageSdk!.name;
     if (hashFrontOcr != null) map['hash_front_ocr'] = hashFrontOcr!;
