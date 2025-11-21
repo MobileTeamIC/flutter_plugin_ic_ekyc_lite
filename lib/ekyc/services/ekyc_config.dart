@@ -53,6 +53,7 @@ class EkycConfig {
     this.isTurnOffCallService,
     this.isEnableScanQRCode,
     this.isShowQRCodeResult,
+    this.challengeCode,
   });
 
   /// Convert to Map for method channel
@@ -79,6 +80,7 @@ class EkycConfig {
       'is_turn_off_call_service': isTurnOffCallService,
       'is_enable_scan_qrcode': isEnableScanQRCode,
       'is_show_qrcode_result': isShowQRCodeResult,
+      'challenge_code': challengeCode,
     };
 
     // Add optional parameters only if they are not null
