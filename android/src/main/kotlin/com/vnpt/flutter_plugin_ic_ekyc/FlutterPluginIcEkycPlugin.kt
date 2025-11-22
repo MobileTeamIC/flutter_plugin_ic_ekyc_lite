@@ -27,7 +27,7 @@ import org.json.JSONObject
 class FlutterPluginIcEkycPlugin : FlutterPlugin, ActivityAware ,MethodCallHandler {
     companion object {
         private const val CHANNEL = "flutter.sdk.ic_ekyc/integrate"
-        private const val EKYC_REQUEST_CODE = 100
+        private const val EKYC_REQUEST_CODE = 11022
     }
 
     // The MethodChannel that will the communication between Flutter and native Android
