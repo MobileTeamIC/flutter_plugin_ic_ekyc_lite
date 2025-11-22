@@ -77,7 +77,17 @@ class FlutterPluginIcEkycPlugin : FlutterPlugin, ActivityAware ,MethodCallHandle
         call: MethodCall,
         result: Result
     ) {
-        val binding = this.binding ?: return
+        val binding = this.binding
+        if (binding == null) {
+            result.error("NO_ACTIVITY", "Activity is not available", null)
+            return
+        }
+        
+        if (this.result != null) {
+            result.error("ALREADY_ACTIVE", "A request is already being processed", null)
+            return
+        }
+        
         val activity = binding.activity
         this.result = result
 
@@ -90,6 +100,7 @@ class FlutterPluginIcEkycPlugin : FlutterPlugin, ActivityAware ,MethodCallHandle
             "startEkycOcrBack" -> activity.getIntentEkycOcrBack(json)
             "startEkycScanQRCode" -> activity.getIntentEkycScanQRCode(json)
             else -> {
+                this.result = null
                 result.notImplemented()
                 null
             }
@@ -103,51 +114,59 @@ class FlutterPluginIcEkycPlugin : FlutterPlugin, ActivityAware ,MethodCallHandle
 
     private val resultActivityListener = PluginRegistry.ActivityResultListener { requestCode, resultCode, data ->
             if (requestCode == EKYC_REQUEST_CODE) {
-                if (resultCode == Activity.RESULT_OK) {
-                    if (data != null) {
-                        val cropPram = data.getStringExtra(KeyResultConstants.CROP_PARAM)
-                        val pathImageFrontFull =
-                            data.getStringExtra(KeyResultConstants.PATH_IMAGE_FRONT_FULL)
-                        val pathImageBackFull =
-                            data.getStringExtra(KeyResultConstants.PATH_IMAGE_BACK_FULL)
-                        val pathImageFaceFull =
-                            data.getStringExtra(KeyResultConstants.PATH_IMAGE_FACE_FULL)
-                        val pathImageFaceFarFull =
-                            data.getStringExtra(KeyResultConstants.PATH_IMAGE_FACE_FAR_FULL)
-                        val pathImageFaceNearFull =
-                            data.getStringExtra(KeyResultConstants.PATH_IMAGE_FACE_NEAR_FULL)
-                        val pathImageScan3DFull =
-                            data.getStringExtra(KeyResultConstants.PATH_FACE_SCAN3D)
-                        val clientSessionResult =
-                            data.getStringExtra(KeyResultConstants.CLIENT_SESSION_RESULT)
-                        result?.success(
-                            JSONObject().apply {
-                                putSafe(KeyResultConstants.CROP_PARAM, cropPram)
-                                putSafe(
-                                    KeyResultConstants.PATH_IMAGE_FRONT_FULL,
-                                    pathImageFrontFull
-                                )
-                                putSafe(KeyResultConstants.PATH_IMAGE_BACK_FULL, pathImageBackFull)
-                                putSafe(KeyResultConstants.PATH_IMAGE_FACE_FULL, pathImageFaceFull)
-                                putSafe(
-                                    KeyResultConstants.PATH_IMAGE_FACE_FAR_FULL,
-                                    pathImageFaceFarFull
-                                )
-                                putSafe(
-                                    KeyResultConstants.PATH_IMAGE_FACE_NEAR_FULL,
-                                    pathImageFaceNearFull
-                                )
-                                putSafe(
-                                    KeyResultConstants.PATH_FACE_SCAN3D,
-                                    pathImageScan3DFull
-                                )
-                                putSafe(
-                                    KeyResultConstants.CLIENT_SESSION_RESULT,
-                                    clientSessionResult
-                                )
-                            }.toString()
-                        )
-                        result = null
+                val pendingResult = this.result
+                this.result = null
+                
+                if (pendingResult != null) {
+                    if (resultCode == Activity.RESULT_OK) {
+                        if (data != null) {
+                            val cropPram = data.getStringExtra(KeyResultConstants.CROP_PARAM)
+                            val pathImageFrontFull =
+                                data.getStringExtra(KeyResultConstants.PATH_IMAGE_FRONT_FULL)
+                            val pathImageBackFull =
+                                data.getStringExtra(KeyResultConstants.PATH_IMAGE_BACK_FULL)
+                            val pathImageFaceFull =
+                                data.getStringExtra(KeyResultConstants.PATH_IMAGE_FACE_FULL)
+                            val pathImageFaceFarFull =
+                                data.getStringExtra(KeyResultConstants.PATH_IMAGE_FACE_FAR_FULL)
+                            val pathImageFaceNearFull =
+                                data.getStringExtra(KeyResultConstants.PATH_IMAGE_FACE_NEAR_FULL)
+                            val pathImageScan3DFull =
+                                data.getStringExtra(KeyResultConstants.PATH_FACE_SCAN3D)
+                            val clientSessionResult =
+                                data.getStringExtra(KeyResultConstants.CLIENT_SESSION_RESULT)
+                            pendingResult.success(
+                                JSONObject().apply {
+                                    putSafe(KeyResultConstants.CROP_PARAM, cropPram)
+                                    putSafe(
+                                        KeyResultConstants.PATH_IMAGE_FRONT_FULL,
+                                        pathImageFrontFull
+                                    )
+                                    putSafe(KeyResultConstants.PATH_IMAGE_BACK_FULL, pathImageBackFull)
+                                    putSafe(KeyResultConstants.PATH_IMAGE_FACE_FULL, pathImageFaceFull)
+                                    putSafe(
+                                        KeyResultConstants.PATH_IMAGE_FACE_FAR_FULL,
+                                        pathImageFaceFarFull
+                                    )
+                                    putSafe(
+                                        KeyResultConstants.PATH_IMAGE_FACE_NEAR_FULL,
+                                        pathImageFaceNearFull
+                                    )
+                                    putSafe(
+                                        KeyResultConstants.PATH_FACE_SCAN3D,
+                                        pathImageScan3DFull
+                                    )
+                                    putSafe(
+                                        KeyResultConstants.CLIENT_SESSION_RESULT,
+                                        clientSessionResult
+                                    )
+                                }.toString()
+                            )
+                        } else {
+                            pendingResult.success(JSONObject().toString())
+                        }
+                    } else {
+                        pendingResult.error("CANCELED", "User canceled the operation", null)
                     }
                 }
             }
