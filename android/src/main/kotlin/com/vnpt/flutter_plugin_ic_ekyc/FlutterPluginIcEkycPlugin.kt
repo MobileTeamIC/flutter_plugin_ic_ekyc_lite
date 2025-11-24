@@ -21,6 +21,7 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry
 import org.json.JSONArray
+import org.json.JSONException
 import org.json.JSONObject
 
 /** FlutterPluginIcEkycPlugin */
@@ -84,65 +85,47 @@ class FlutterPluginIcEkycPlugin : FlutterPlugin, ActivityAware ,MethodCallHandle
     }
 
     private val resultActivityListener = PluginRegistry.ActivityResultListener { requestCode, resultCode, data ->
-            if (requestCode == EKYC_REQUEST_CODE) {
-                val pendingResult = this.result
-                this.result = null
-                
-                if (pendingResult != null) {
-                    if (resultCode == Activity.RESULT_OK) {
-                        if (data != null) {
-                            val cropPram = data.getStringExtra(KeyResultConstants.CROP_PARAM)
-                            val pathImageFrontFull =
-                                data.getStringExtra(KeyResultConstants.PATH_IMAGE_FRONT_FULL)
-                            val pathImageBackFull =
-                                data.getStringExtra(KeyResultConstants.PATH_IMAGE_BACK_FULL)
-                            val pathImageFaceFull =
-                                data.getStringExtra(KeyResultConstants.PATH_IMAGE_FACE_FULL)
-                            val pathImageFaceFarFull =
-                                data.getStringExtra(KeyResultConstants.PATH_IMAGE_FACE_FAR_FULL)
-                            val pathImageFaceNearFull =
-                                data.getStringExtra(KeyResultConstants.PATH_IMAGE_FACE_NEAR_FULL)
-                            val pathImageScan3DFull =
-                                data.getStringExtra(KeyResultConstants.PATH_FACE_SCAN3D)
-                            val clientSessionResult =
-                                data.getStringExtra(KeyResultConstants.CLIENT_SESSION_RESULT)
-                            pendingResult.success(
-                                JSONObject().apply {
-                                    putResult(KeyResultConstants.CROP_PARAM, cropPram)
-                                    putResult(
-                                        KeyResultConstants.PATH_IMAGE_FRONT_FULL,
-                                        pathImageFrontFull
-                                    )
-                                    putResult(KeyResultConstants.PATH_IMAGE_BACK_FULL, pathImageBackFull)
-                                    putResult(KeyResultConstants.PATH_IMAGE_FACE_FULL, pathImageFaceFull)
-                                    putResult(
-                                        KeyResultConstants.PATH_IMAGE_FACE_FAR_FULL,
-                                        pathImageFaceFarFull
-                                    )
-                                    putResult(
-                                        KeyResultConstants.PATH_IMAGE_FACE_NEAR_FULL,
-                                        pathImageFaceNearFull
-                                    )
-                                    putResult(
-                                        KeyResultConstants.PATH_FACE_SCAN3D,
-                                        pathImageScan3DFull
-                                    )
-                                    putResult(
-                                        KeyResultConstants.CLIENT_SESSION_RESULT,
-                                        clientSessionResult
-                                    )
-                                }.toString()
-                            )
-                        } else {
-                            pendingResult.success(JSONObject().toString())
-                        }
-                    } else {
-                        pendingResult.error("CANCELED", "User canceled the operation", null)
+        if (requestCode == EKYC_REQUEST_CODE) {
+            val pendingResult = this.result
+            this.result = null // Clear reference ngay lập tức để tránh leak
+
+            if (pendingResult != null) {
+                val lastStep = data?.getStringExtra(KeyResultConstants.LAST_STEP)
+                val finalResponse = JSONObject()
+
+                if (resultCode == Activity.RESULT_OK && data != null && lastStep == SDKEnum.LastStepEnum.Done.value) {
+                    val dataJson = JSONObject().apply {
+                        putResult(KeyResultConstants.CROP_PARAM, data.getStringExtra(KeyResultConstants.CROP_PARAM))
+                        putResult(KeyResultConstants.PATH_IMAGE_FRONT_FULL, data.getStringExtra(KeyResultConstants.PATH_IMAGE_FRONT_FULL))
+                        putResult(KeyResultConstants.PATH_IMAGE_BACK_FULL, data.getStringExtra(KeyResultConstants.PATH_IMAGE_BACK_FULL))
+                        putResult(KeyResultConstants.PATH_IMAGE_FACE_FULL, data.getStringExtra(KeyResultConstants.PATH_IMAGE_FACE_FULL))
+                        putResult(KeyResultConstants.PATH_IMAGE_FACE_FAR_FULL, data.getStringExtra(KeyResultConstants.PATH_IMAGE_FACE_FAR_FULL))
+                        putResult(KeyResultConstants.PATH_IMAGE_FACE_NEAR_FULL, data.getStringExtra(KeyResultConstants.PATH_IMAGE_FACE_NEAR_FULL))
+                        putResult(KeyResultConstants.PATH_FACE_SCAN3D, data.getStringExtra(KeyResultConstants.PATH_FACE_SCAN3D))
+                        putResult(KeyResultConstants.CLIENT_SESSION_RESULT, data.getStringExtra(KeyResultConstants.CLIENT_SESSION_RESULT))
+                    }
+
+                    try {
+                        finalResponse.put("status", EKYCStatus.SUCCESS)
+                        finalResponse.put("data", dataJson)
+                    } catch (e: JSONException) {
+                        e.printStackTrace()
+                    }
+                } else {
+                    try {
+                        var canceledJson = JSONObject()
+                        canceledJson.put("lastScreen", lastStep)
+                        finalResponse.put("status", EKYCStatus.CANCELLED)
+                        finalResponse.put("data", canceledJson)
+                    } catch (e: JSONException) {
+                        pendingResult.error("JSON_ERROR", e.message, e.message)
                     }
                 }
+                pendingResult.success(finalResponse.toString())
             }
-            true
         }
+        true
+    }
 
     // Phương thức thực hiện eKYC luồng "Chụp ảnh giấy tờ"
     // Bước 1 - chụp ảnh giấy tờ
@@ -459,6 +442,12 @@ class FlutterPluginIcEkycPlugin : FlutterPlugin, ActivityAware ,MethodCallHandle
     }
 
     // Mark: - Helper
+
+    object EKYCStatus {
+        const val SUCCESS = "SUCCESS"
+        const val CANCELLED = "CANCELLED"
+        const val FAILED = "FAILED"
+    }
     private fun parseJsonFromArgs(call: MethodCall): JSONObject {
         return try {
             @Suppress("UNCHECKED_CAST")

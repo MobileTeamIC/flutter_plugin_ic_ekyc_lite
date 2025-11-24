@@ -1,70 +1,46 @@
-import 'dart:convert';
-
-import 'package:flutter/services.dart';
-
 import 'services/ekyc_config.dart';
+import 'services/ekyc_response.dart';
+import 'services/ekyc_method_channel.dart';
 
-/// Main eKYC method channel service
+/// Main eKYC service
+/// Provides unified response structure with status and data
 class ICEkyc {
-  static const MethodChannel _channel =
-      MethodChannel('flutter.sdk.ic_ekyc/integrate');
+  final EkycMethodChannel _methodChannel;
 
-  const ICEkyc();
-  static const  ICEkyc _instance = ICEkyc();
+  const ICEkyc({EkycMethodChannel? methodChannel})
+      : _methodChannel = methodChannel ?? const EkycMethodChannel();
 
-static ICEkyc get instance => _instance;
+  static const ICEkyc _instance = ICEkyc();
+
+  static ICEkyc get instance => _instance;
 
   /// Start full eKYC flow (OCR + Face verification)
-  Future<Map<String, dynamic>> startEkycFull(ICEkycConfig config) async {
-    return _invokeMethod('startEkycFull', config);
+  Future<EkycResponse> startEkycFull(ICEkycConfig config) async {
+    return _methodChannel.startEkycFull(config);
   }
 
   /// Start OCR only flow
-  Future<Map<String, dynamic>> startEkycOcr(ICEkycConfig config) async {
-    return _invokeMethod('startEkycOcr', config);
+  Future<EkycResponse> startEkycOcr(ICEkycConfig config) async {
+    return _methodChannel.startEkycOcr(config);
   }
 
   /// Start OCR front side only flow
-  Future<Map<String, dynamic>> startEkycOcrFront(ICEkycConfig config) async {
-    return _invokeMethod('startEkycOcrFront', config);
+  Future<EkycResponse> startEkycOcrFront(ICEkycConfig config) async {
+    return _methodChannel.startEkycOcrFront(config);
   }
 
   /// Start OCR back side only flow
-  Future<Map<String, dynamic>> startEkycOcrBack(ICEkycConfig config) async {
-    return _invokeMethod('startEkycOcrBack', config);
+  Future<EkycResponse> startEkycOcrBack(ICEkycConfig config) async {
+    return _methodChannel.startEkycOcrBack(config);
   }
 
   /// Start face verification only flow
-  Future<Map<String, dynamic>> startEkycFace(ICEkycConfig config) async {
-    return _invokeMethod('startEkycFace', config);
+  Future<EkycResponse> startEkycFace(ICEkycConfig config) async {
+    return _methodChannel.startEkycFace(config);
   }
 
   /// Start Scan QR Code flow
-  Future<Map<String, dynamic>> startEkycScanQRCode(ICEkycConfig config) async {
-    return _invokeMethod('startEkycScanQRCode', config);
-  }
-
-  /// Generic method to invoke native iOS methods
-  Future<Map<String, dynamic>> _invokeMethod(
-      String methodName, ICEkycConfig config) async {
-    try {
-      final dynamic result =
-          await _channel.invokeMethod(methodName, config.toMap());
-
-      print('result: $result');
-
-      return jsonDecode(result);
-    } on PlatformException catch (e) {
-      throw PlatformException(
-        code: e.code,
-        message: 'Failed to invoke $methodName: ${e.message}',
-        details: e.details,
-      );
-    } catch (e) {
-      throw PlatformException(
-        code: 'UNKNOWN_ERROR',
-        message: 'Unknown error occurred: $e',
-      );
-    }
+  Future<EkycResponse> startEkycScanQRCode(ICEkycConfig config) async {
+    return _methodChannel.startEkycScanQRCode(config);
   }
 }

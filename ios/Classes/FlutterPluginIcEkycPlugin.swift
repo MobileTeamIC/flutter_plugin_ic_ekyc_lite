@@ -3,83 +3,104 @@ import UIKit
 import ICSdkEKYC
 
 public class FlutterPluginIcEkycPlugin: NSObject, FlutterPlugin {
-
- // Store the result callback for SDK delegate methods
-  private var pendingResult: FlutterResult?
-  private var flutterViewController: UIViewController? {
-    // Find the key window's root view controller
-    var keyWindow: UIWindow?
-    if #available(iOS 13.0, *) {
-      keyWindow = UIApplication.shared.connectedScenes
-        .compactMap { $0 as? UIWindowScene }
-        .flatMap { $0.windows }
-        .first { $0.isKeyWindow }
-    } else {
-      keyWindow = UIApplication.shared.windows.first(where: { $0.isKeyWindow })
-    }
-     
-    guard let window = keyWindow,
-          var topController = window.rootViewController else {
-      return nil
+    
+    // Store the result callback for SDK delegate methods
+    private var pendingResult: FlutterResult?
+    private var flutterViewController: UIViewController? {
+        // Find the key window's root view controller
+        var keyWindow: UIWindow?
+        if #available(iOS 13.0, *) {
+            keyWindow = UIApplication.shared.connectedScenes
+                .compactMap { $0 as? UIWindowScene }
+                .flatMap { $0.windows }
+                .first { $0.isKeyWindow }
+        } else {
+            keyWindow = UIApplication.shared.windows.first(where: { $0.isKeyWindow })
+        }
+        
+        guard let window = keyWindow,
+              var topController = window.rootViewController else {
+            return nil
+        }
+        
+        while let presentedViewController = topController.presentedViewController {
+            topController = presentedViewController
+        }
+        return topController
     }
     
-    while let presentedViewController = topController.presentedViewController {
-      topController = presentedViewController
-    }
-    return topController
-  }
-
-  public static func register(with registrar: FlutterPluginRegistrar) {
-    let channel = FlutterMethodChannel(name: "flutter.sdk.ic_ekyc/integrate", binaryMessenger: registrar.messenger())
-    let instance = FlutterPluginIcEkycPlugin()
-    registrar.addMethodCallDelegate(instance, channel: channel)
-  }
-
-  public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    pendingResult = result
-    
-    guard let args = call.arguments as? [String: Any] else {
-      result(FlutterError(code: "INVALID_ARGUMENTS", message: "Invalid arguments", details: nil))
-      return
+    public static func register(with registrar: FlutterPluginRegistrar) {
+        let channel = FlutterMethodChannel(name: "flutter.sdk.ic_ekyc/integrate", binaryMessenger: registrar.messenger())
+        let instance = FlutterPluginIcEkycPlugin()
+        registrar.addMethodCallDelegate(instance, channel: channel)
     }
     
-    guard let controller = flutterViewController else {
-      result(FlutterError(code: "NO_VIEW_CONTROLLER", message: "No view controller available", details: nil))
-      return
+    public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+        pendingResult = result
+        
+        guard let args = call.arguments as? [String: Any] else {
+            let errorResponse: [String: Any] = [
+                "status": EKYCStatus.failed,
+                "data": [
+                    "code": "INVALID_ARGUMENTS",
+                    "message": "Invalid arguments"
+                ]
+            ]
+            sendJsonResult(errorResponse)
+            return
+        }
+        
+        guard let controller = flutterViewController else {
+            let errorResponse: [String: Any] = [
+                "status": EKYCStatus.failed,
+                "data": [
+                    "code": "NO_VIEW_CONTROLLER",
+                    "message": "No view controller available"
+                ]
+            ]
+            sendJsonResult(errorResponse)
+            return
+        }
+        
+        switch call.method {
+        case "startEkycFull":
+            self.startEkycFull(controller, args: args)
+        case "startEkycOcr":
+            self.startEkycOcr(controller, args: args)
+        case "startEkycOcrFront":
+            self.startEkycOcrFront(controller, args: args)
+        case "startEkycOcrBack":
+            self.startEkycOcrBack(controller, args: args)
+        case "startEkycFace":
+            self.startEkycFace(controller, args: args)
+        case "startEkycScanQRCode":
+            self.startEkycScanQRCode(controller, args: args)
+        default:
+            let errorResponse: [String: Any] = [
+                "status": EKYCStatus.failed,
+                "data": [
+                    "code": "METHOD_NOT_IMPLEMENTED",
+                    "message": "Method \(call.method) is not implemented"
+                ]
+            ]
+            sendJsonResult(errorResponse)
+        }
     }
     
-    switch call.method {
-      case "startEkycFull":
-          self.startEkycFull(controller, args: args)
-      case "startEkycOcr":
-          self.startEkycOcr(controller, args: args)
-      case "startEkycOcrFront":
-          self.startEkycOcrFront(controller, args: args)
-      case "startEkycOcrBack":
-          self.startEkycOcrBack(controller, args: args)
-      case "startEkycFace":
-          self.startEkycFace(controller, args: args)
-      case "startEkycScanQRCode":
-          self.startEkycScanQRCode(controller, args: args)
-      default:
-          result(FlutterMethodNotImplemented)
-    }
-  }
-
-   //MARK: - Full
+    //MARK: - Full
     /// Luồng đầy đủ: OCR + Face Verification
-    /// 
+    ///
     /// Thực hiện eKYC đầy đủ các bước: chụp giấy tờ và chụp ảnh chân dung
-    /// 
+    ///
     /// - Parameters:
     ///   - controller: Root view controller để present eKYC SDK
     ///   - info: Dictionary chứa các thông số cấu hình eKYC
-    /// 
+    ///
     /// - Required Parameters (info):
     ///   - access_token: Mã truy cập từ eKYC admin dashboard
     ///   - token_id: Token ID từ eKYC admin dashboard
     ///   - token_key: Token key từ eKYC admin dashboard
-    /// 
+    ///
     /// - Optional Parameters (info):
     ///   - flow_type: Loại luồng thực hiện ("full", "none", "scanqr", "ocrfront", "ocrback", "ocr", "face")
     ///   - version_sdk: Phiên bản SDK cho chụp ảnh chân dung ("normal", "prooval")
@@ -97,7 +118,7 @@ public class FlutterPluginIcEkycPlugin: NSObject, FlutterPlugin {
     ///   - is_show_logo: Bật/tắt hiển thị LOGO thương hiệu ("true"/"false")
     func startEkycFull(_ controller: UIViewController, args: [String: Any]) {
         let ICEkycCamera = ICEkycCameraRouter.createModule() as! ICEkycCameraViewController
-
+        
         let accessToken = (args[KeyArgumentMethod.accessToken] as? String) ?? ""
         let tokenId = (args[KeyArgumentMethod.tokenId] as? String) ?? ""
         let tokenKey = (args[KeyArgumentMethod.tokenKey] as? String) ?? ""
@@ -117,7 +138,7 @@ public class FlutterPluginIcEkycPlugin: NSObject, FlutterPlugin {
         let challengeCode = (args[KeyArgumentMethod.challengeCode] as? String) ?? ""
         let isEnableScanQRCode = (args[KeyArgumentMethod.isEnableScanQRCode] as? Bool) ?? false
         let isTurnOffCallService = (args[KeyArgumentMethod.isTurnOffCallService] as? Bool) ?? true
-
+        
         ICEkycCamera.cameraDelegate = self
         ICEkycCamera.flowType = full
         ICEkycCamera.accessToken = accessToken
@@ -150,18 +171,18 @@ public class FlutterPluginIcEkycPlugin: NSObject, FlutterPlugin {
     
     //MARK: - OCR
     /// Luồng chỉ thực hiện đọc giấy tờ: OCR
-    /// 
+    ///
     /// Thực hiện OCR giấy tờ (cả mặt trước và mặt sau)
-    /// 
+    ///
     /// - Parameters:
     ///   - controller: Root view controller để present eKYC SDK
     ///   - info: Dictionary chứa các thông số cấu hình eKYC
-    /// 
+    ///
     /// - Required Parameters (info):
     ///   - access_token: Mã truy cập từ eKYC admin dashboard
     ///   - token_id: Token ID từ eKYC admin dashboard
     ///   - token_key: Token key từ eKYC admin dashboard
-    /// 
+    ///
     /// - Optional Parameters (info):
     ///   - flow_type: Loại luồng thực hiện ("ocr", "none", "scanqr", "ocrfront", "ocrback", "full", "face")
     ///   - document_type: Loại giấy tờ ("identitycard", "idcardchipbased", "passport", "driverlicense", "militaryidcard")
@@ -175,7 +196,7 @@ public class FlutterPluginIcEkycPlugin: NSObject, FlutterPlugin {
     ///   - is_show_logo: Bật/tắt hiển thị LOGO thương hiệu ("true"/"false")
     func startEkycOcr(_ controller: UIViewController, args: [String: Any]) {
         let ICEkycCamera = ICEkycCameraRouter.createModule() as! ICEkycCameraViewController
-
+        
         let accessToken = (args[KeyArgumentMethod.accessToken] as? String) ?? ""
         let tokenId = (args[KeyArgumentMethod.tokenId] as? String) ?? ""
         let tokenKey = (args[KeyArgumentMethod.tokenKey] as? String) ?? ""
@@ -223,18 +244,18 @@ public class FlutterPluginIcEkycPlugin: NSObject, FlutterPlugin {
     
     //MARK: - OCR FONT
     /// Luồng chỉ thực hiện đọc giấy tờ chỉ mặt trước: OCR Front
-    /// 
+    ///
     /// Thực hiện OCR giấy tờ một bước: chụp mặt trước giấy tờ
-    /// 
+    ///
     /// - Parameters:
     ///   - controller: Root view controller để present eKYC SDK
     ///   - info: Dictionary chứa các thông số cấu hình eKYC
-    /// 
+    ///
     /// - Required Parameters (info):
     ///   - access_token: Mã truy cập từ eKYC admin dashboard
     ///   - token_id: Token ID từ eKYC admin dashboard
     ///   - token_key: Token key từ eKYC admin dashboard
-    /// 
+    ///
     /// - Optional Parameters (info):
     ///   - flow_type: Loại luồng thực hiện ("ocrfront", "none", "scanqr", "ocrback", "ocr", "full", "face")
     ///   - document_type: Loại giấy tờ ("identitycard", "idcardchipbased", "passport", "driverlicense", "militaryidcard")
@@ -247,7 +268,7 @@ public class FlutterPluginIcEkycPlugin: NSObject, FlutterPlugin {
     ///   - is_show_logo: Bật/tắt hiển thị LOGO thương hiệu ("true"/"false")
     func startEkycOcrFront(_ controller: UIViewController, args: [String: Any]) {
         let ICEkycCamera = ICEkycCameraRouter.createModule() as! ICEkycCameraViewController
-
+        
         let accessToken = (args[KeyArgumentMethod.accessToken] as? String) ?? ""
         let tokenId = (args[KeyArgumentMethod.tokenId] as? String) ?? ""
         let tokenKey = (args[KeyArgumentMethod.tokenKey] as? String) ?? ""
@@ -295,9 +316,9 @@ public class FlutterPluginIcEkycPlugin: NSObject, FlutterPlugin {
     
     //MARK: - ORC BACK
     /// Luồng chỉ thực hiện đọc giấy tờ chỉ mặt sau: OCR Back
-    /// 
+    ///
     /// Thực hiện OCR giấy tờ một bước: chụp mặt sau giấy tờ
-    /// 
+    ///
     /// - Parameters:
     ///   - controller: Root view controller để present eKYC SDK
     ///   - info: Dictionary chứa các thông số cấu hình eKYC
@@ -351,7 +372,7 @@ public class FlutterPluginIcEkycPlugin: NSObject, FlutterPlugin {
         ICEkycCamera.changeBaseUrl = changeBaseUrl
         ICEkycCamera.isEnableGotIt = isEnableGotIt
         ICEkycCamera.isShowLogo = isShowLogo
-
+        
         ICEkycCamera.challengeCode = challengeCode
         ICEkycCamera.challengeCode = challengeCode
         ICEkycCamera.languageSdk = convertLanguageSdk(languageSdk)
@@ -369,9 +390,9 @@ public class FlutterPluginIcEkycPlugin: NSObject, FlutterPlugin {
     
     //MARK: - FACE
     /// Luồng chỉ thực hiện xác thực khuôn mặt: Face Verification
-    /// 
+    ///
     /// Thực hiện chụp ảnh Oval xa gần và thực hiện các chức năng tùy vào cấu hình: Compare, Verify, Mask, Liveness Face
-    /// 
+    ///
     /// - Parameters:
     ///   - controller: Root view controller để present eKYC SDK
     ///   - info: Dictionary chứa các thông số cấu hình eKYC
@@ -411,8 +432,8 @@ public class FlutterPluginIcEkycPlugin: NSObject, FlutterPlugin {
         let isEnableScanQRCode = (args[KeyArgumentMethod.isEnableScanQRCode] as? Bool) ?? false
         ICEkycCamera.cameraDelegate = self
         ICEkycCamera.flowType = face
-
-
+        
+        
         ICEkycCamera.accessToken = accessToken
         ICEkycCamera.tokenId = tokenId
         ICEkycCamera.tokenKey = tokenKey
@@ -425,7 +446,7 @@ public class FlutterPluginIcEkycPlugin: NSObject, FlutterPlugin {
         ICEkycCamera.changeBaseUrl = changeBaseUrl
         ICEkycCamera.isEnableGotIt = isEnableGotIt
         ICEkycCamera.isShowLogo = isShowLogo
-
+        
         ICEkycCamera.challengeCode = challengeCode
         ICEkycCamera.challengeCode = challengeCode
         ICEkycCamera.languageSdk = convertLanguageSdk(languageSdk)
@@ -438,12 +459,12 @@ public class FlutterPluginIcEkycPlugin: NSObject, FlutterPlugin {
             controller.present(ICEkycCamera, animated: true)
         }
     }
-
+    
     //MARK: - SCANQR CODE
     /// Luồng chỉ thực hiện quét QR code: Scan QR Code
-    /// 
+    ///
     /// Thực hiện quét QR code để lấy thông tin từ QR code
-    /// 
+    ///
     /// - Parameters:
     ///   - controller: Root view controller để present eKYC SDK
     ///   - info: Dictionary chứa các thông số cấu hình eKYC
@@ -469,31 +490,31 @@ public class FlutterPluginIcEkycPlugin: NSObject, FlutterPlugin {
         let isTurnOffCallService = (args[KeyArgumentMethod.isTurnOffCallService] as? Bool) ?? true
         let challengeCode = (args[KeyArgumentMethod.challengeCode] as? String) ?? ""
         let isEnableScanQRCode = (args[KeyArgumentMethod.isEnableScanQRCode] as? Bool) ?? false
-
+        
         ICEkycCamera.cameraDelegate = self
         ICEkycCamera.flowType = scanQR
-
+        
         ICEkycCamera.accessToken = accessToken
         ICEkycCamera.tokenId = tokenId
         ICEkycCamera.tokenKey = tokenKey
         ICEkycCamera.isShowTutorial = isShowTutorial
         ICEkycCamera.isEnableGotIt = isEnableGotIt
         ICEkycCamera.isShowLogo = isShowLogo
-
+        
         ICEkycCamera.challengeCode = challengeCode
         ICEkycCamera.challengeCode = challengeCode
         ICEkycCamera.languageSdk = convertLanguageSdk(languageSdk)
         ICEkycCamera.cameraPositionForPortrait = PositionFront
         ICEkycCamera.isEnableScanQRCode = isEnableScanQRCode
         ICEkycCamera.isTurnOffCallService = isTurnOffCallService
-
+        
         DispatchQueue.main.async {
             ICEkycCamera.modalTransitionStyle = .coverVertical
             ICEkycCamera.modalPresentationStyle = .fullScreen
             controller.present(ICEkycCamera, animated: true)
         }
     }
-  
+    
     
     private func convertToDictionary(text: String) -> [String: Any]? {
         if let data = text.data(using: .utf8) {
@@ -578,7 +599,7 @@ public class FlutterPluginIcEkycPlugin: NSObject, FlutterPlugin {
     
     private func convertLanguageSdk(_ value: String?) -> String {
         guard let value = value?.lowercased() else { return "icekyc_vi" }
-
+        
         switch value {
         case "icekyc_vi":
             return "icekyc_vi"
@@ -588,57 +609,144 @@ public class FlutterPluginIcEkycPlugin: NSObject, FlutterPlugin {
             return "icekyc_vi"
         }
     }
-
+    
+   
+    
 }
 
 extension FlutterPluginIcEkycPlugin: ICEkycCameraDelegate {
     
+    // MARK: - Success Delegate
     public func icEkycGetResult() {
-        UIDevice.current.isProximityMonitoringEnabled = false /// tắt cảm biến làm tối màn hình
-        let cropParam = ICEKYCSavedData.shared().cropParam;
-        let pathImageFrontFull = ICEKYCSavedData.shared().pathImageFrontFull;
-        let pathImageBackFull = ICEKYCSavedData.shared().pathImageBackFull;
-        let pathImageFaceFull = ICEKYCSavedData.shared().pathImageFaceFull;
-        let pathImageFaceFarFull = ICEKYCSavedData.shared().pathImageFaceFarFull;
-        let pathImageFaceNearFull = ICEKYCSavedData.shared().pathImageFaceNearFull;
-        let dataScan3D = ICEKYCSavedData.shared().dataScan3D;
-        // save file
-        let pathFaceScan3D = saveDataToDocuments(data: dataScan3D, fileName: "3dScanPortrait", fileExtension: "txt")
-        let clientSessionResult = ICEKYCSavedData.shared().clientSessionResult;
+        UIDevice.current.isProximityMonitoringEnabled = false
         
-        let dict: [String: Any] = [
+        // 1. Lấy dữ liệu từ SDK
+        let sharedData = ICEKYCSavedData.shared()
+        
+        // Kiểm tra an toàn (Optional Unwrapping) nếu cần, ở đây giả định SDK luôn trả về
+        let cropParam = sharedData.cropParam
+        let pathImageFrontFull = sharedData.pathImageFrontFull
+        let pathImageBackFull = sharedData.pathImageBackFull
+        let pathImageFaceFull = sharedData.pathImageFaceFull
+        let pathImageFaceFarFull = sharedData.pathImageFaceFarFull
+        let pathImageFaceNearFull = sharedData.pathImageFaceNearFull
+        let dataScan3D = sharedData.dataScan3D
+        let clientSessionResult = sharedData.clientSessionResult
+        
+        // Save file 3D Scan
+        let pathFaceScan3D = saveDataToDocuments(data: dataScan3D, fileName: "3dScanPortrait", fileExtension: "txt")
+        
+        // 2. Tạo Dictionary chứa DATA thực tế
+        let dataDict: [String: Any] = [
             KeyResultConstantsEKYC.cropParam: cropParam,
             KeyResultConstantsEKYC.pathImageFrontFull: pathImageFrontFull.path,
-            KeyResultConstantsEKYC.pathImageBackFull: pathImageBackFull.path,
+            KeyResultConstantsEKYC.pathImageBackFull: pathImageBackFull.path ,
             KeyResultConstantsEKYC.pathImageFaceFull: pathImageFaceFull.path ,
-            KeyResultConstantsEKYC.pathImageFaceFarFull: pathImageFaceFarFull.path,
-            KeyResultConstantsEKYC.pathImageFaceNearFull: pathImageFaceNearFull.path,
-            KeyResultConstantsEKYC.pathImageFaceScan3D: dataScan3D.isEmpty ? "" : pathFaceScan3D?.path ?? "",
+            KeyResultConstantsEKYC.pathImageFaceFarFull: pathImageFaceFarFull.path ,
+            KeyResultConstantsEKYC.pathImageFaceNearFull: pathImageFaceNearFull.path ,
+            KeyResultConstantsEKYC.pathImageFaceScan3D: dataScan3D.isEmpty ? "" : (pathFaceScan3D?.path ?? ""),
             KeyResultConstantsEKYC.clientSessionResult: clientSessionResult
         ]
         
-        do {
-            let jsonData = try JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted)
-            let jsonString = String(data: jsonData, encoding: String.Encoding.utf8)
-            pendingResult?(jsonString)
-            pendingResult = nil
-            
-        } catch {
-            print(error.localizedDescription)
-            pendingResult?(FlutterError(code: "JSON_ERROR", message: error.localizedDescription, details: nil))
-            pendingResult = nil
-        }
-      
+        // 3. Đóng gói theo cấu trúc chuẩn: Status + Data
+        let finalResponse: [String: Any] = [
+            "status": EKYCStatus.success,
+            "data": dataDict
+        ]
+        
+        // 4. Serialize sang JSON String và trả về Flutter
+        sendJsonResult(finalResponse)
     }
     
     public func icEkycCameraClosed(with type: ScreenType) {
         UIDevice.current.isProximityMonitoringEnabled = false
-        pendingResult?(FlutterError(code: "CANCELLED", message: "User cancelled eKYC flow", details: nil))
-        pendingResult = nil
+        
+        let finalResponse: [String: Any] = [
+            "status": EKYCStatus.cancelled,
+            "data": ["lastScreen": convertScreenTypeToString(type)]
+        ]
+        
+        sendJsonResult(finalResponse)
+    }
+}
+
+//MARK: Helper
+extension FlutterPluginIcEkycPlugin {
+    
+    /// Convert ScreenType enum to string representation
+    /// - Parameter type: ScreenType enum value (Objective-C enum with NSUInteger rawValue)
+    /// - Returns: String representation of the screen type
+    private func convertScreenTypeToString(_ type: ScreenType) -> String {
+        // ScreenType is an Objective-C enum with NSUInteger rawValue
+        // Values: CancelPermission=0, HelpDocument=1, ScanQRCode=2, etc.
+        switch type.rawValue {
+        case 0: // CancelPermission
+            return "CancelPermission"
+        case 1: // HelpDocument
+            return "HelpDocument"
+        case 2: // ScanQRCode
+            return "ScanQRCode"
+        case 3: // CaptureFront
+            return "CaptureFront"
+        case 4: // CaptureBack
+            return "CaptureBack"
+        case 5: // HelpOval
+            return "HelpOval"
+        case 6: // AuthenFarFace
+            return "AuthenFarFace"
+        case 7: // AuthenNearFace
+            return "AuthenNearFace"
+        case 8: // HelpFaceBasic
+            return "HelpFaceBasic"
+        case 9: // CaptureFaceBasic
+            return "CaptureFaceBasic"
+        case 10: // Processing
+            return "Processing"
+        case 11: // Done
+            return "Done"
+        default:
+            return "Unknown"
+        }
     }
     
-}
-extension FlutterPluginIcEkycPlugin {
+    // Định nghĩa các trạng thái để đồng bộ với bên Flutter
+    struct EKYCStatus {
+        static let success = "SUCCESS"
+        static let cancelled = "CANCELLED"
+        static let failed = "FAILED"
+    }
+    
+    private func sendJsonResult(_ dict: [String: Any]) {
+        do {
+            let jsonData = try JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted)
+            let jsonString = String(data: jsonData, encoding: .utf8)
+            
+            // Trả về String JSON thành công
+            pendingResult?(jsonString)
+            pendingResult = nil
+            
+        } catch {
+            print("JSON Serialization Error: \(error.localizedDescription)")
+            // Trường hợp lỗi parse JSON thì vẫn trả về JSON với status FAILED
+            let errorResponse: [String: Any] = [
+                "status": EKYCStatus.failed,
+                "data": [
+                    "code": "JSON_ERROR",
+                    "message": error.localizedDescription
+                ]
+            ]
+            
+            // Fallback: nếu không thể serialize error response, mới trả về FlutterError
+            if let errorJsonData = try? JSONSerialization.data(withJSONObject: errorResponse, options: .prettyPrinted),
+               let errorJsonString = String(data: errorJsonData, encoding: .utf8) {
+                pendingResult?(errorJsonString)
+            } else {
+                pendingResult?(FlutterError(code: "JSON_ERROR", message: error.localizedDescription, details: nil))
+            }
+            pendingResult = nil
+        }
+    }
+    
     /// Hàm lưu Data vào thư mục Documents
     /// - Parameters:
     ///   - data: Dữ liệu cần lưu (tương đương NSData)

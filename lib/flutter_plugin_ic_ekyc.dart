@@ -6,3 +6,4 @@ export 'ekyc/services/ekyc_config.dart';
 export 'ekyc/services/ekyc_method_channel.dart';
 export 'ekyc/services/ekyc_presentation.dart';
 export 'ekyc/services/ekyc_key_result.dart';
+export 'ekyc/services/ekyc_response.dart';

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_plugin_ic_ekyc/ekyc/ekyc.dart';
 import 'package:flutter_plugin_ic_ekyc/ekyc/services/ekyc_presentation.dart';
 import 'package:flutter_plugin_ic_ekyc/ekyc/services/enum_ekyc.dart';
+import 'package:flutter_plugin_ic_ekyc/ekyc/services/ekyc_response.dart';
 import 'package:flutter_plugin_ic_ekyc_example/view/log_screen.dart';
 import 'package:flutter_plugin_ic_ekyc_example/view/setting_screen.dart';
 
@@ -39,12 +39,14 @@ class _EkycScreenState extends State<EkycScreen> {
     super.dispose();
   }
 
-  void _navigateToLog(Map<String, dynamic> json) {
-    if (json.isNotEmpty) {
+  void _navigateToLog(EkycResponse response) {
+    // Convert EkycResponse to Map for LogScreen
+    final resultData = response.successData;
+    if (resultData != null) {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => LogScreen(json: json),
+          builder: (context) => LogScreen(resultData: resultData),
         ),
       );
     }
@@ -237,87 +239,134 @@ class _EkycScreenState extends State<EkycScreen> {
   }
 
   Future<void> _handleFullEkyc() async {
-    try {
-      final config = ICEkycPresets.fullEkyc(
-        accessToken: _accessToken,
-        tokenId: _tokenId,
-        tokenKey: _tokenKey,
-        languageSdk: _languageSdk,
-      );
-      _navigateToLog(await ICEkyc.instance.startEkycFull(config));
-    } on PlatformException catch (e) {
-      _showError(e.message ?? 'Lỗi không xác định');
+    final config = ICEkycPresets.fullEkyc(
+      accessToken: _accessToken,
+      tokenId: _tokenId,
+      tokenKey: _tokenKey,
+      languageSdk: _languageSdk,
+    );
+    
+    final response = await ICEkyc.instance.startEkycFull(config);
+    
+    if (response.isSuccess) {
+      // Xử lý data thành công
+      final data = response.successData;
+      print("Đường dẫn ảnh trước: ${data?.pathImageFrontFull}");
+      _navigateToLog(response);
+    } else if (response.isCancelled) {
+      // User thoát màn hình
+      final lastScreen = response.cancelledData?.lastScreen;
+      _showError("Người dùng đã hủy ở màn hình: ${lastScreen?.value ?? 'unknown'}");
+    } else {
+      // Lỗi hệ thống
+      final errorMessage = response.errorData?['message'] ?? 'Lỗi không xác định';
+      _showError(errorMessage);
     }
   }
 
   Future<void> _handleOcrOnly() async {
-    try {
-      final config = ICEkycPresets.ocrOnly(
-        accessToken: _accessToken,
-        tokenId: _tokenId,
-        tokenKey: _tokenKey,
-        languageSdk: _languageSdk,
-      );
-      _navigateToLog(await ICEkyc.instance.startEkycOcr(config));
-    } on PlatformException catch (e) {
-      _showError(e.message ?? 'Lỗi không xác định');
+    final config = ICEkycPresets.ocrOnly(
+      accessToken: _accessToken,
+      tokenId: _tokenId,
+      tokenKey: _tokenKey,
+      languageSdk: _languageSdk,
+    );
+    
+    final response = await ICEkyc.instance.startEkycOcr(config);
+    
+    if (response.isSuccess) {
+      _navigateToLog(response);
+    } else if (response.isCancelled) {
+      final lastScreen = response.cancelledData?.lastScreen;
+      _showError("Người dùng đã hủy ở màn hình: ${lastScreen?.value ?? 'unknown'}");
+    } else {
+      final errorMessage = response.errorData?['message'] ?? response.errorData?['error'] ?? 'Lỗi không xác định';
+      _showError(errorMessage);
     }
   }
 
   Future<void> _handleOcrFront() async {
-    try {
-      final config = ICEkycPresets.ocrFront(
-        accessToken: _accessToken,
-        tokenId: _tokenId,
-        tokenKey: _tokenKey,
-        languageSdk: _languageSdk,
-      );
-      _navigateToLog(await ICEkyc.instance.startEkycOcrFront(config));
-    } on PlatformException catch (e) {
-      _showError(e.message ?? 'Lỗi không xác định');
+    final config = ICEkycPresets.ocrFront(
+      accessToken: _accessToken,
+      tokenId: _tokenId,
+      tokenKey: _tokenKey,
+      languageSdk: _languageSdk,
+    );
+    
+    final response = await ICEkyc.instance.startEkycOcrFront(config);
+    
+    if (response.isSuccess) {
+      _navigateToLog(response);
+    } else if (response.isCancelled) {
+      final lastScreen = response.cancelledData?.lastScreen;
+      _showError("Người dùng đã hủy ở màn hình: ${lastScreen?.value ?? 'unknown'}");
+    } else {
+      final errorMessage = response.errorData?['message'] ?? 'Lỗi không xác định';
+      _showError(errorMessage);
     }
   }
 
   Future<void> _handleOcrBack() async {
-    try {
-      final config = ICEkycPresets.ocrBack(
-        accessToken: _accessToken,
-        tokenId: _tokenId,
-        tokenKey: _tokenKey,
-        hashFrontOcr: _hashFrontOcrController.text,
-        languageSdk: _languageSdk,
-      );
-      _navigateToLog(await ICEkyc.instance.startEkycOcrBack(config));
-    } on PlatformException catch (e) {
-      _showError(e.message ?? 'Lỗi không xác định');
+    final config = ICEkycPresets.ocrBack(
+      accessToken: _accessToken,
+      tokenId: _tokenId,
+      tokenKey: _tokenKey,
+      hashFrontOcr: _hashFrontOcrController.text,
+      languageSdk: _languageSdk,
+    );
+    
+    final response = await ICEkyc.instance.startEkycOcrBack(config);
+    
+    if (response.isSuccess) {
+      _navigateToLog(response);
+    } else if (response.isCancelled) {
+      final lastScreen = response.cancelledData?.lastScreen;
+      _showError("Người dùng đã hủy ở màn hình: ${lastScreen?.value ?? 'unknown'}");
+    } else {
+      final errorMessage = response.errorData?['message'] ?? 'Lỗi không xác định';
+      _showError(errorMessage);
     }
   }
 
   Future<void> _handleFaceVerification() async {
-    try {
-      final config = ICEkycPresets.faceVerification(
-        accessToken: _accessToken,
-        tokenId: _tokenId,
-        tokenKey: _tokenKey,
-        languageSdk: _languageSdk,
-      );
-      _navigateToLog(await ICEkyc.instance.startEkycFace(config));
-    } on PlatformException catch (e) {
-      _showError(e.message ?? 'Lỗi không xác định');
+    final config = ICEkycPresets.faceVerification(
+      accessToken: _accessToken,
+      tokenId: _tokenId,
+      tokenKey: _tokenKey,
+      languageSdk: _languageSdk,
+    );
+    
+    final response = await ICEkyc.instance.startEkycFace(config);
+    
+    if (response.isSuccess) {
+      _navigateToLog(response);
+    } else if (response.isCancelled) {
+      final lastScreen = response.cancelledData?.lastScreen;
+      _showError("Người dùng đã hủy ở màn hình: ${lastScreen?.value ?? 'unknown'}");
+    } else {
+      final errorMessage = response.errorData?['message'] ?? 'Lỗi không xác định';
+      _showError(errorMessage);
     }
   }
 
   Future<void> _handleScanQRCode() async {
-    try {
-      final config = ICEkycPresets.scanQRCode(
-        accessToken: _accessToken,
-        tokenId: _tokenId,
-        tokenKey: _tokenKey,
-        languageSdk: _languageSdk,
-      );
-      _navigateToLog(await ICEkyc.instance.startEkycScanQRCode(config));
-    } on PlatformException catch (e) {
-      _showError(e.message ?? 'Lỗi không xác định');
+    final config = ICEkycPresets.scanQRCode(
+      accessToken: _accessToken,
+      tokenId: _tokenId,
+      tokenKey: _tokenKey,
+      languageSdk: _languageSdk,
+    );
+    
+    final response = await ICEkyc.instance.startEkycScanQRCode(config);
+    
+    if (response.isSuccess) {
+      _navigateToLog(response);
+    } else if (response.isCancelled) {
+      final lastScreen = response.cancelledData?.lastScreen;
+      _showError("Người dùng đã hủy ở màn hình: ${lastScreen?.value ?? 'unknown'}");
+    } else {
+      final errorMessage = response.errorData?['message'] ?? 'Lỗi không xác định';
+      _showError(errorMessage);
     }
   }
 }

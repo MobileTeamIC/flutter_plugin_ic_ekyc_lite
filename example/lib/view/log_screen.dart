@@ -6,11 +6,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_plugin_ic_ekyc/flutter_plugin_ic_ekyc.dart';
 
 class LogScreen extends StatelessWidget {
-  final Map<String, dynamic> json;
+  final EkycResultData resultData;
 
-  const LogScreen({super.key, required this.json});
+  const LogScreen({super.key, required this.resultData});
 
-  bool get shouldShowCopyAll => json.isNotEmpty;
+  bool get shouldShowCopyAll => resultData.isNotEmpty;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +32,7 @@ class LogScreen extends StatelessWidget {
         ],
       ),
       body:
-          json.isEmpty
+          resultData.isEmpty
               ? Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -55,76 +55,77 @@ class LogScreen extends StatelessWidget {
               : ListView(
                 padding: const EdgeInsets.all(8),
                 children: [
+                  Text(json.toString()),
                   _buildSafeImage(
-                    json[ICEkycKeyResult.pathImageFrontFull] as String?,
+                    resultData.pathImageFrontFull,
                   ),
                   _buildSafeImage(
-                    json[ICEkycKeyResult.pathImageBackFull] as String?,
+                    resultData.pathImageBackFull,
                   ),
                   _buildSafeImage(
-                    json[ICEkycKeyResult.pathImageFaceFull] as String?,
+                    resultData.pathImageFaceFull,
                   ),
                   _buildSafeImage(
-                    json[ICEkycKeyResult.pathImageFaceFarFull] as String?,
+                    resultData.pathImageFaceFarFull,
                   ),
                   _buildSafeImage(
-                    json[ICEkycKeyResult.pathImageFaceNearFull] as String?,
+                    resultData.pathImageFaceNearFull,
                   ),
                   const SizedBox(height: 12),
                   _buildLogItem(
                     context,
                     icon: Icons.face_retouching_natural,
                     title: 'Client Session Result',
-                    content: json[ICEkycKeyResult.clientSessionResult],
+                    content: resultData.clientSessionResult,
                   ),
                   const SizedBox(height: 12),
                   _buildLogItem(
                     context,
                     icon: Icons.document_scanner,
                     title: 'Crop Param',
-                    content: json[ICEkycKeyResult.cropParam],
+                    content: resultData.cropParam,
                   ),
                   const SizedBox(height: 12),
                   _buildLogItem(
                     context,
                     icon: Icons.image,
                     title: 'Path Image Front Full',
-                    content: json[ICEkycKeyResult.pathImageFrontFull],
+                    content: resultData.pathImageFrontFull,
                   ),
                   const SizedBox(height: 12),
                   _buildLogItem(
                     context,
                     icon: Icons.credit_card,
                     title: 'Path Image Back Full',
-                    content: json[ICEkycKeyResult.pathImageBackFull],
+                    content: resultData.pathImageBackFull,
                   ),
                   const SizedBox(height: 12),
                   _buildLogItem(
                     context,
                     icon: Icons.credit_card,
                     title: 'Path Image Face Full',
-                    content: json[ICEkycKeyResult.pathImageFaceFull],
+                    content: resultData.pathImageFaceFull,
                   ),
                   const SizedBox(height: 12),
                   _buildLogItem(
                     context,
                     icon: Icons.compare_arrows,
                     title: 'Path Image Face Far Full',
-                    content: json[ICEkycKeyResult.pathImageFaceFarFull],
+                    content: resultData.pathImageFaceFarFull,
                   ),
 
                   _buildLogItem(
                     context,
                     icon: Icons.compare_arrows,
                     title: 'Path Image Face Near Full',
-                    content: json[ICEkycKeyResult.pathImageFaceNearFull],
+                    content: resultData.pathImageFaceNearFull,
                   ),
 
                   _buildLogItem(
                     context,
                     icon: Icons.compare_arrows,
                     title: 'Path Image Face Scan 3D',
-                    content: json[ICEkycKeyResult.pathImageFaceScan3D],
+                    content: resultData.pathImageFaceScan3D,
                   ),
 
                   const SizedBox(height: 16),
@@ -147,47 +148,8 @@ class LogScreen extends StatelessWidget {
   }
 
   Future<void> _copyAllToClipboard(BuildContext context) async {
-    final buffer = StringBuffer();
-    final keys = [
-      ICEkycKeyResult.clientSessionResult,
-      ICEkycKeyResult.cropParam,
-      ICEkycKeyResult.pathImageFrontFull,
-      ICEkycKeyResult.pathImageBackFull,
-      ICEkycKeyResult.pathImageFaceFull,
-      ICEkycKeyResult.pathImageFaceFarFull,
-      ICEkycKeyResult.pathImageFaceNearFull,
-      ICEkycKeyResult.pathImageFaceScan3D,
-    ];
-
-    for (final key in keys) {
-      final content = json[key];
-      if (content != null && content.toString().trim().isNotEmpty) {
-        buffer.writeln('$key:');
-        buffer.writeln(content);
-        buffer.writeln('\n---\n');
-      }
-    }
-
-    if (buffer.isNotEmpty) {
-      await Clipboard.setData(ClipboardData(text: buffer.toString()));
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Row(
-              children: [
-                Icon(Icons.check_circle, color: Colors.white),
-                SizedBox(width: 8),
-                Text('Đã sao chép tất cả'),
-              ],
-            ),
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-        );
-      }
+    if (resultData.isNotEmpty) {
+      await Clipboard.setData(ClipboardData(text: resultData.toString()));
     }
   }
 
