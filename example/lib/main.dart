@@ -2,9 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_animate/flutter_animate.dart';
-import 'package:flutter_plugin_ic_ekyc_example/theme/app_theme.dart';
-import 'package:flutter_plugin_ic_ekyc_example/view/home_screen.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_plugin_ic_ekyc_example/view/ekyc_screen.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'service/shared_preference.dart';
@@ -13,22 +13,31 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   SharedPreferenceService.init(await SharedPreferences.getInstance());
+  await dotenv.load(fileName: ".env");
   await _setupUIConstraints();
-  runApp(const ICEkycApp());
+  runApp(const SampleIntegrateEkycApp());
 }
 
-class ICEkycApp extends StatelessWidget {
-  const ICEkycApp({super.key});
+class SampleIntegrateEkycApp extends StatelessWidget {
+  const SampleIntegrateEkycApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'VNPT eKYC  SDK',
+    return ShadApp(
+      title: 'VNPT eKYC SDK',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
+      darkTheme: ShadThemeData(
+        brightness: Brightness.dark,
+        colorScheme: const ShadGreenColorScheme.dark(),
+      ),
+      theme: ShadThemeData(
+        brightness: Brightness.light,
+        colorScheme: const ShadGreenColorScheme.light(),
+      ),
       home: GestureDetector(
+        behavior: HitTestBehavior.opaque,
         onTap: () => FocusScope.of(context).unfocus(),
-        child: const HomeScreen(title: 'VNPT eKYC  SDK'),
+        child: const EkycScreen(),
       ),
     );
   }
@@ -46,6 +55,4 @@ Future<void> _setupUIConstraints() async {
       overlays: SystemUiOverlay.values,
     );
   }
-
-  Animate.restartOnHotReload = true;
 }

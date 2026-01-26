@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_plugin_ic_ekyc_example/view/ekyc_screen.dart';
-import 'package:flutter_plugin_ic_ekyc_example/view/nfc_screen.dart';
 import 'package:flutter_plugin_ic_ekyc_example/view/setting_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -40,7 +39,8 @@ class HomeScreen extends StatelessWidget {
                 context,
                 icon: Icons.verified_user,
                 title: 'eKYC',
-                description: 'Xác thực danh tính điện tử với OCR, Liveness và Face Verification',
+                description:
+                    'Xác thực danh tính điện tử với OCR, Liveness và Face Verification',
                 color: Theme.of(context).colorScheme.primary,
                 onTap: () {
                   Navigator.push(
@@ -121,21 +121,14 @@ class HomeScreen extends StatelessWidget {
                   color: color.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(
-                  icon,
-                  size: 32,
-                  color: color,
-                ),
+                child: Icon(icon, size: 32, color: color),
               ),
               const SizedBox(width: 16),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      title,
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
+                    Text(title, style: Theme.of(context).textTheme.titleLarge),
                     const SizedBox(height: 4),
                     Text(
                       description,

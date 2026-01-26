@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_plugin_ic_ekyc/ekyc/services/enum_ekyc.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_plugin_ic_ekyc/flutter_plugin_ic_ekyc.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 
 import '../service/shared_preference.dart';
+import '../theme/context.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
@@ -17,10 +20,10 @@ class _SettingScreenState extends State<SettingScreen> {
   final TextEditingController _tokenKeyController = TextEditingController();
   final TextEditingController _baseUrlController = TextEditingController();
   bool _isLoading = false;
-  LanguageSdk _languageSdk = LanguageSdk.icekyc_vi;
-  ModeButtonHeaderBar _modeButtonHeaderBar = ModeButtonHeaderBar.leftButton;
-  bool _isShowLogo = true;
 
+  LanguageSdk _languageMode = LanguageSdk.icekyc_vi;
+  ModeButtonHeaderBar _modeButtonHeaderBar = ModeButtonHeaderBar.leftButton;
+  bool _isShowLogo = false;
 
   @override
   void initState() {
@@ -41,19 +44,24 @@ class _SettingScreenState extends State<SettingScreen> {
     _baseUrlController.text = SharedPreferenceService.instance.getString(
       SharedPreferenceKeys.baseUrl,
     );
-    _languageSdk =
+    _languageMode =
         SharedPreferenceService.instance.getBool(
               SharedPreferenceKeys.isViLanguageMode,
               defaultValue: true,
             )
             ? LanguageSdk.icekyc_vi
             : LanguageSdk.icekyc_en;
-    _modeButtonHeaderBar = SharedPreferenceService.instance.getString(
-      SharedPreferenceKeys.modeButtonHeaderBar,
-    ) == ModeButtonHeaderBar.leftButton.name ? ModeButtonHeaderBar.leftButton : ModeButtonHeaderBar.rightButton;
+
+    _modeButtonHeaderBar =
+        SharedPreferenceService.instance.getString(
+                  SharedPreferenceKeys.modeButtonHeaderBar,
+                ) ==
+                ModeButtonHeaderBar.leftButton.name
+            ? ModeButtonHeaderBar.leftButton
+            : ModeButtonHeaderBar.rightButton;
     _isShowLogo = SharedPreferenceService.instance.getBool(
       SharedPreferenceKeys.isShowLogo,
-      defaultValue: true,
+      defaultValue: false,
     );
   }
 
@@ -93,7 +101,7 @@ class _SettingScreenState extends State<SettingScreen> {
         ),
         SharedPreferenceService.instance.setBool(
           SharedPreferenceKeys.isViLanguageMode,
-          _languageSdk == LanguageSdk.icekyc_vi,
+          _languageMode == LanguageSdk.icekyc_vi,
         ),
         SharedPreferenceService.instance.setString(
           SharedPreferenceKeys.modeButtonHeaderBar,
@@ -106,40 +114,22 @@ class _SettingScreenState extends State<SettingScreen> {
       ]);
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Row(
-              children: [
-                Icon(Icons.check_circle, color: Colors.white),
-                SizedBox(width: 8),
-                Text('Đã lưu cài đặt thành công'),
-              ],
-            ),
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
+        ShadToaster.of(context).show(
+          ShadToast(
+            title: Text('Đã lưu cài đặt thành công'),
+            titleStyle: context.textTheme.p.copyWith(color: Colors.white),
+            backgroundColor: context.colorScheme.primary,
           ),
         );
         Navigator.pop(context);
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: [
-                const Icon(Icons.error_outline, color: Colors.white),
-                const SizedBox(width: 8),
-                Expanded(child: Text('Lỗi khi lưu: $e')),
-              ],
-            ),
-            backgroundColor: Theme.of(context).colorScheme.error,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
+        ShadToaster.of(context).show(
+          ShadToast(
+            title: Text('Lỗi khi lưu: $e'),
+            titleStyle: context.textTheme.p.copyWith(color: Colors.white),
+            backgroundColor: context.colorScheme.destructive,
           ),
         );
       }
@@ -152,104 +142,263 @@ class _SettingScreenState extends State<SettingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Cài đặt')),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(children: [
-                  Text('Hiển thị Logo'),
-                  Spacer(),
-                  Switch(value: _isShowLogo, onChanged: (value) {
-                    setState(() => _isShowLogo = value);
-                  }),
-                ],),
-                const SizedBox(height: 16),
-                  Row(children: [
-                      Text('Mode Button Header Bar'),
-                      Spacer(),
-                       Text(_modeButtonHeaderBar.name),
-                      Switch(value: _modeButtonHeaderBar == ModeButtonHeaderBar.leftButton, onChanged: (value) {
-                        setState(() => _modeButtonHeaderBar = value ? ModeButtonHeaderBar.leftButton : ModeButtonHeaderBar.rightButton);
-                      }),
-                     
-                    ],),
-                    const SizedBox(height: 16),
-                DropdownButtonFormField<String>(
-                  value: _languageSdk.name,
-                  items: [
-                  
-                    DropdownMenuItem(
-                      value: LanguageSdk.icekyc_vi.name,
-                      child: const Text('Tiếng Việt'),
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        appBar: AppBar(title: Text('Cài đặt', style: context.textTheme.h3)),
+        body: SafeArea(
+          child: Column(
+            spacing: 16,
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  physics: const BouncingScrollPhysics(),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      spacing: 16,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              'Hiển thị Logo',
+                              style: context.textTheme.large,
+                            ),
+                            Spacer(),
+                            ShadSwitch(
+                              value: _isShowLogo,
+                              onChanged: (v) => setState(() => _isShowLogo = v),
+                            ),
+                          ],
+                        ),
+                        _titleAndWidget(
+                          'Mode Button Header Bar',
+                          ShadSelect<String>(
+                            selectedOptionBuilder:
+                                (context, value) => Text(value),
+                            placeholder: const Text(' Mode Button Header Bar'),
+                            options: [
+                              ShadOption(
+                                value: ModeButtonHeaderBar.leftButton.name,
+                                child: Text(
+                                  ModeButtonHeaderBar.leftButton.name,
+                                ),
+                              ),
+                              ShadOption(
+                                value: ModeButtonHeaderBar.rightButton.name,
+                                child: Text(
+                                  ModeButtonHeaderBar.rightButton.name,
+                                ),
+                              ),
+                            ],
+                            onChanged:
+                                (value) => setState(
+                                  () =>
+                                      _modeButtonHeaderBar = ModeButtonHeaderBar
+                                          .values
+                                          .firstWhere((e) => e.name == value),
+                                ),
+                          ),
+                        ),
+
+                        // Language mode
+                        _titleAndWidget(
+                          'Ngôn ngữ',
+                          ShadSelect<String>(
+                            selectedOptionBuilder:
+                                (context, value) => Text(
+                                  value == LanguageSdk.icekyc_vi.name
+                                      ? 'Tiếng Việt'
+                                      : 'Tiếng Anh',
+                                ),
+                            placeholder: const Text(' Chọn Ngôn ngữ'),
+                            onChanged:
+                                (value) => setState(
+                                  () =>
+                                      _languageMode = LanguageSdk.values
+                                          .firstWhere((e) => e.name == value),
+                                ),
+                            initialValue: _languageMode.name,
+                            options: [
+                              ShadOption(
+                                value: LanguageSdk.icekyc_vi.name,
+                                child: Text('Tiếng Việt'),
+                              ),
+                              ShadOption(
+                                value: LanguageSdk.icekyc_en.name,
+                                child: Text('Tiếng Anh'),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        // Base URL
+                        _titleAndTextFormField(
+                          id: 'base_url',
+                          title: 'Base URL',
+                          placeholder: 'Nhập Base URL',
+                          controller: _baseUrlController,
+                        ),
+
+                        // Access Token
+                        _titleAndTextFormField(
+                          id: 'access_token',
+                          title: 'Access Token',
+                          placeholder: 'Nhập Access Token',
+                          controller: _accessTokenController,
+                          isTextArea: true,
+                        ),
+
+                        // Token ID
+                        _titleAndTextFormField(
+                          id: 'token_id',
+                          title: 'Token ID',
+                          placeholder: 'Nhập Token ID',
+                          controller: _tokenIdController,
+                        ),
+
+                        // Token Key
+                        _titleAndTextFormField(
+                          id: 'token_key',
+                          title: 'Token Key',
+                          placeholder: 'Nhập Token Key',
+                          controller: _tokenKeyController,
+                        ),
+                      ],
                     ),
-                    DropdownMenuItem(
-                      value: LanguageSdk.icekyc_en.name,
-                      child: const Text('Tiếng Anh'),
-                    ),
-                  ],
-                  onChanged: (value) {
-                    setState(() => _languageSdk = LanguageSdk.values.firstWhere((e) => e.name == value));
-                  },
-                ),
-                const SizedBox(height: 24),
-                TextField(
-                  controller: _accessTokenController,
-                  decoration: const InputDecoration(
-                    labelText: 'Access Token',
-                    hintText: 'Nhập Access Token',
-                    prefixIcon: Icon(Icons.vpn_key),
                   ),
-                  textInputAction: TextInputAction.next,
                 ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: _tokenIdController,
-                  decoration: const InputDecoration(
-                    labelText: 'Token ID',
-                    hintText: 'Nhập Token ID',
-                    prefixIcon: Icon(Icons.badge),
-                  ),
-                  textInputAction: TextInputAction.next,
+              ),
+              // Save button
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
                 ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: _tokenKeyController,
-                  decoration: const InputDecoration(
-                    labelText: 'Token Key',
-                    hintText: 'Nhập Token Key',
-                    prefixIcon: Icon(Icons.key),
+                child: ShadButton(
+                  onPressed: _isLoading ? null : _saveSettings,
+                  backgroundColor: context.colorScheme.primary,
+                  width: double.infinity,
+                  height: 48,
+                  child: Text(
+                    _isLoading ? 'Đang lưu...' : 'Lưu cài đặt',
+                    style: context.textTheme.large,
                   ),
-                  textInputAction: TextInputAction.next,
                 ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: _baseUrlController,
-                  decoration: const InputDecoration(
-                    labelText: 'Base URL',
-                    hintText: 'https://api.example.com',
-                    prefixIcon: Icon(Icons.link),
-                  ),
-                  keyboardType: TextInputType.url,
-                  textInputAction: TextInputAction.done,
-                ),
-                const SizedBox(height: 32),
-                 ElevatedButton(
-                    onPressed: _isLoading ? null : _saveSettings,
-                    child: Text(_isLoading ? 'Đang lưu...' : 'Lưu cài đặt'),
-                  ),
-                  const SizedBox(height: 16),
-               
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
     );
+  }
+
+  _titleAndTextFormField({
+    required String id,
+    required String title,
+    required String placeholder,
+    required TextEditingController controller,
+    bool isTextArea = false,
+  }) {
+    if (isTextArea) {
+      return ShadTextareaFormField(
+        id: id,
+        label: Text(title),
+        resizable: true,
+        maxHeight: 400,
+        minHeight: 100,
+        placeholder: Text(placeholder),
+        controller: controller,
+        trailing: Row(
+          spacing: 8,
+          children: [
+            ShadIconButton(
+              backgroundColor: context.colorScheme.cardForeground,
+              width: 32,
+              height: 32,
+              onPressed: () => _handlePaste(context, controller),
+              icon: const Icon(LucideIcons.clipboardPaste),
+            ),
+            ShadIconButton(
+              backgroundColor: context.colorScheme.cardForeground,
+              width: 32,
+              height: 32,
+              onPressed: () => _handleCopy(controller.text),
+              icon: const Icon(LucideIcons.copy),
+            ),
+          ],
+        ),
+      );
+    } else {
+      return ShadInputFormField(
+        id: id,
+        label: Text(title),
+        placeholder: Text(placeholder),
+        controller: controller,
+        trailing: Row(
+          spacing: 8,
+          children: [
+            ShadIconButton(
+              backgroundColor: context.colorScheme.cardForeground,
+              width: 32,
+              height: 32,
+              onPressed: () => _handlePaste(context, controller),
+              icon: const Icon(LucideIcons.clipboardPaste),
+            ),
+            ShadIconButton(
+              backgroundColor: context.colorScheme.cardForeground,
+              width: 32,
+              height: 32,
+              onPressed: () => _handleCopy(controller.text),
+              icon: const Icon(LucideIcons.copy),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
+  _titleAndWidget(String title, Widget widget) {
+    return Column(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      spacing: 8,
+      children: [
+        Text(title, style: Theme.of(context).textTheme.titleSmall),
+        widget,
+      ],
+    );
+  }
+
+  //handle
+  _handleCopy(String text) {
+    Clipboard.setData(ClipboardData(text: text));
+    ShadToaster.of(context).show(
+      ShadToast(
+        title: Text('Đã copy vào clipboard'),
+        titleStyle: context.textTheme.p.copyWith(color: Colors.white),
+        backgroundColor: context.colorScheme.primary,
+      ),
+    );
+  }
+
+  _handlePaste(BuildContext context, TextEditingController controller) async {
+    final clipboard = await Clipboard.getData(Clipboard.kTextPlain);
+    if (clipboard != null) {
+      controller.text = clipboard.text ?? '';
+      if (context.mounted) {
+        ShadToaster.of(context).show(
+          ShadToast(
+            title: Text('Đã paste vào clipboard'),
+            titleStyle: context.textTheme.p.copyWith(color: Colors.white),
+            backgroundColor: context.colorScheme.primary,
+          ),
+        );
+      }
+    }
   }
 }

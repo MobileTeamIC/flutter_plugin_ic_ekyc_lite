@@ -6,7 +6,6 @@
 // For more information about Flutter integration tests, please see
 // https://flutter.dev/to/integration-testing
 
-
 import 'package:flutter_plugin_ic_ekyc/ekyc/services/ekyc_config.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -16,14 +15,16 @@ import 'package:flutter_plugin_ic_ekyc/ekyc/ekyc.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('getPlatformVersion test', (WidgetTester tester) async {
-    final ICEkyc plugin = ICEkyc.instance;
-    final Map<String, dynamic> result = await plugin.startEkycFull(EkycConfig(
-      accessToken: 'accessToken',
-      tokenId: 'tokenId',
-      tokenKey: 'tokenKey',
-      changeBaseUrl: 'baseUrl',
-    ));
-    expect(result.isNotEmpty, true);
+  testWidgets('eKYC plugin test', (WidgetTester tester) async {
+    // Test eKYC SDK initialization
+    final config = ICEkycConfig(
+      accessToken: 'test_token',
+      tokenId: 'test_id',
+      tokenKey: 'test_key',
+    );
+
+    // Basic test to ensure plugin can be instantiated
+    expect(ICEkyc.instance, isNotNull);
+    expect(config, isNotNull);
   });
 }

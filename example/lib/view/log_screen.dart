@@ -4,29 +4,31 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_plugin_ic_ekyc/flutter_plugin_ic_ekyc.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 
-class LogScreen extends StatelessWidget {
+import '../theme/context.dart';
+
+class LogScreen extends StatefulWidget {
   final Map<String, dynamic> json;
 
-  const LogScreen({
-    super.key,
-    required this.json,
-  });
+  const LogScreen({super.key, required this.json});
 
-  bool get shouldShowCopyAll => json.isNotEmpty;
+  @override
+  State<LogScreen> createState() => _LogScreenState();
+}
 
+class _LogScreenState extends State<LogScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Kết quả eKYC'),
         actions: [
-          if (shouldShowCopyAll)
-            IconButton(
-              icon: const Icon(Icons.copy_all),
-              onPressed: () => _copyAllToClipboard(context),
-              tooltip: 'Sao chép tất cả',
-            ),
+          IconButton(
+            icon: const Icon(Icons.copy_all),
+            onPressed: () => _copyAllToClipboard(context),
+            tooltip: 'Sao chép tất cả',
+          ),
           IconButton(
             icon: const Icon(Icons.close),
             onPressed: () => Navigator.pop(context),
@@ -34,177 +36,183 @@ class LogScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: json.isEmpty
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+      body:
+          widget.json.isEmpty
+              ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.info_outline,
+                      size: 64,
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.3),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Không có dữ liệu',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                  ],
+                ),
+              )
+              : ListView(
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
                 children: [
-                  Icon(
-                    Icons.info_outline,
-                    size: 64,
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+                  // Display images if available
+                  _buildSafeImage(
+                    widget.json[ICEkycKeyResult.pathImageFrontFull] as String?,
+                    'Ảnh mặt trước',
+                  ),
+                  _buildSafeImage(
+                    widget.json[ICEkycKeyResult.pathImageBackFull] as String?,
+                    'Ảnh mặt sau',
+                  ),
+                  _buildSafeImage(
+                    widget.json[ICEkycKeyResult.pathImageFaceFull] as String?,
+                    'Ảnh khuôn mặt',
+                  ),
+                  _buildSafeImage(
+                    widget.json[ICEkycKeyResult.pathImageFaceFarFull]
+                        as String?,
+                    'Ảnh khuôn mặt xa',
+                  ),
+                  _buildSafeImage(
+                    widget.json[ICEkycKeyResult.pathImageFaceNearFull]
+                        as String?,
+                    'Ảnh khuôn mặt gần',
+                  ),
+                  _buildSafeImage(
+                    widget.json[ICEkycKeyResult.pathImageFaceScan3D] as String?,
+                    'Ảnh 3D Scan',
+                  ),
+
+                  // Display data fields
+                  _buildLogItem(
+                    context,
+                    icon: Icons.document_scanner,
+                    title: 'CROP PARAM',
+                    content: widget.json[ICEkycKeyResult.cropParam],
+                  ),
+                  const SizedBox(height: 12),
+                  _buildLogItem(
+                    context,
+                    icon: Icons.credit_card,
+                    title: 'Client Session Result',
+                    content: widget.json[ICEkycKeyResult.clientSessionResult],
+                  ),
+                  const SizedBox(height: 12),
+                  _buildLogItem(
+                    context,
+                    icon: Icons.image,
+                    title: 'Path Image Front Full',
+                    content: widget.json[ICEkycKeyResult.pathImageFrontFull],
+                  ),
+                  const SizedBox(height: 12),
+                  _buildLogItem(
+                    context,
+                    icon: Icons.image,
+                    title: 'Path Image Back Full',
+                    content: widget.json[ICEkycKeyResult.pathImageBackFull],
+                  ),
+                  const SizedBox(height: 12),
+                  _buildLogItem(
+                    context,
+                    icon: Icons.face,
+                    title: 'Path Image Face Full',
+                    content: widget.json[ICEkycKeyResult.pathImageFaceFull],
+                  ),
+                  const SizedBox(height: 12),
+                  _buildLogItem(
+                    context,
+                    icon: Icons.face,
+                    title: 'Path Image Face Far Full',
+                    content: widget.json[ICEkycKeyResult.pathImageFaceFarFull],
+                  ),
+                  const SizedBox(height: 12),
+                  _buildLogItem(
+                    context,
+                    icon: Icons.face,
+                    title: 'Path Image Face Near Full',
+                    content: widget.json[ICEkycKeyResult.pathImageFaceNearFull],
+                  ),
+                  const SizedBox(height: 12),
+                  _buildLogItem(
+                    context,
+                    icon: Icons.threed_rotation,
+                    title: 'Path Face Scan 3D',
+                    content: widget.json[ICEkycKeyResult.pathImageFaceScan3D],
                   ),
                   const SizedBox(height: 16),
-                  Text(
-                    'Không có dữ liệu',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
                 ],
               ),
-            )
-          : ListView(
-              padding: const EdgeInsets.all(8),
-              children: [
-                 _buildSafeImage(
-                    json[ICEkycKeyResult.pathImageFrontFull]
-                  ),
-                  _buildSafeImage(
-                    json[ICEkycKeyResult.pathImageBackFull],
-                  ),
-                  _buildSafeImage(
-                    json[ICEkycKeyResult.pathImageFaceFull],
-                  ),
-                  _buildSafeImage(
-                    json[ICEkycKeyResult.pathImageFaceFarFull],
-                  ),
-                  _buildSafeImage(
-                    json[ICEkycKeyResult.pathImageFaceNearFull],
-                  ),
-                  _buildLogItem(
-                  context,
-                  icon: Icons.face_retouching_natural,
-                  title: 'Client Session Result',
-                  content: json[ICEkycKeyResult.clientSessionResult],
-                ),
-                const SizedBox(height: 12),
-                _buildLogItem(
-                  context,
-                  icon: Icons.document_scanner,
-                  title: 'Crop Param',
-                  content: json[ICEkycKeyResult.cropParam],
-                ),
-                const SizedBox(height: 12),
-                _buildLogItem(
-                  context,
-                  icon: Icons.image,
-                  title: 'Path Image Front Full',
-                  content: json[ICEkycKeyResult.pathImageFrontFull],
-                ),
-                const SizedBox(height: 12),
-                _buildLogItem(
-                  context,
-                  icon: Icons.credit_card,
-                  title: 'Path Image Back Full',
-                  content: json[ICEkycKeyResult.pathImageBackFull],
-                ),
-                const SizedBox(height: 12),
-                _buildLogItem(
-                  context,
-                  icon: Icons.credit_card,
-                  title: 'Path Image Face Full',
-                  content: json[ICEkycKeyResult.pathImageFaceFull],
-                ),
-                const SizedBox(height: 12),
-                _buildLogItem(
-                  context,
-                  icon: Icons.compare_arrows,
-                  title: 'Path Image Face Far Full',
-                  content: json[ICEkycKeyResult.pathImageFaceFarFull],
-                ),
-
-                _buildLogItem(
-                  context,
-                  icon: Icons.compare_arrows,
-                  title: 'Path Image Face Near Full',
-                  content: json[ICEkycKeyResult.pathImageFaceNearFull],
-                ),
-
-                _buildLogItem(
-                  context,
-                  icon: Icons.compare_arrows,
-                  title: 'Path Image Face Scan 3D',
-                  content: json[ICEkycKeyResult.pathImageFaceScan3D],
-                ),
-              
-                const SizedBox(height: 16),
-              ],
-            ),
     );
   }
 
-    Widget _buildSafeImage(String? path) {
+  Widget _buildSafeImage(String? path, String label) {
     if (path == null || path.isEmpty) {
       return const SizedBox.shrink();
     }
 
-    return Image.file(
-      File(path),
-      errorBuilder: (context, error, stackTrace) {
-        return const SizedBox.shrink();
-      },
-    );
-  }
-
-  Future<void> _copyAllToClipboard(BuildContext context) async {
-    final buffer = StringBuffer();
-    final keys = [
-      ICEkycKeyResult.clientSessionResult,
-      ICEkycKeyResult.cropParam,
-      ICEkycKeyResult.pathImageFrontFull,
-      ICEkycKeyResult.pathImageBackFull,
-      ICEkycKeyResult.pathImageFaceFull,
-      ICEkycKeyResult.pathImageFaceFarFull,
-      ICEkycKeyResult.pathImageFaceNearFull,
-      ICEkycKeyResult.pathImageFaceScan3D,
-    ];
-
-    for (final key in keys) {
-      final content = json[key];
-      if (content != null && content.toString().trim().isNotEmpty) {
-        buffer.writeln('$key:');
-        buffer.writeln(content);
-        buffer.writeln('\n---\n');
+    File file;
+    try {
+      if (path.startsWith('file://')) {
+        file = File(Uri.parse(path).toFilePath());
+      } else {
+        file = File(path);
       }
+    } catch (e) {
+      return const SizedBox.shrink();
     }
 
-    if (buffer.isNotEmpty) {
-      await Clipboard.setData(ClipboardData(text: buffer.toString()));
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Row(
-              children: [
-                Icon(Icons.check_circle, color: Colors.white),
-                SizedBox(width: 8),
-                Text('Đã sao chép tất cả'),
-              ],
-            ),
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+    // Check if file exists
+    if (!file.existsSync()) {
+      return const SizedBox.shrink();
+    }
+
+    // Read file as bytes
+    Uint8List imageBytes;
+    try {
+      imageBytes = file.readAsBytesSync();
+    } catch (e) {
+      return const SizedBox.shrink();
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            label,
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
           ),
-        );
-      }
-    }
+        ),
+        Image.memory(
+          imageBytes,
+          gaplessPlayback: true,
+          key: ValueKey(DateTime.now().millisecondsSinceEpoch),
+          errorBuilder: (context, error, stackTrace) {
+            return const SizedBox.shrink();
+          },
+        ),
+        const SizedBox(height: 16),
+      ],
+    );
   }
 
   Future<void> _copyToClipboard(BuildContext context, String? content) async {
     if (content != null && content.trim().isNotEmpty) {
       await Clipboard.setData(ClipboardData(text: content));
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Row(
-              children: [
-                Icon(Icons.check_circle, color: Colors.white, size: 20),
-                SizedBox(width: 8),
-                Text('Đã sao chép'),
-              ],
-            ),
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            behavior: SnackBarBehavior.floating,
-            duration: const Duration(seconds: 1),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        ShadToaster.of(context).show(
+          ShadToast(
+            title: Text('Đã sao chép'),
+            titleStyle: context.theme.textTheme.p.copyWith(color: Colors.white),
+            backgroundColor: context.theme.colorScheme.primary,
           ),
         );
       }
@@ -262,20 +270,6 @@ class LogScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                if (isJson && parsedJson?['logID'] != null)
-                  TextButton.icon(
-                    onPressed: () => _copyToClipboard(context, parsedJson!['logID']?.toString()),
-                    icon: const Icon(Icons.copy, size: 16, color: Colors.white),
-                    label: const Text(
-                      'LogID',
-                      style: TextStyle(color: Colors.white, fontSize: 12),
-                    ),
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      minimumSize: Size.zero,
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                  ),
                 TextButton.icon(
                   onPressed: () => _copyToClipboard(context, content),
                   icon: const Icon(Icons.copy, size: 16, color: Colors.white),
@@ -284,7 +278,10 @@ class LogScreen extends StatelessWidget {
                     style: TextStyle(color: Colors.white, fontSize: 12),
                   ),
                   style: TextButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     minimumSize: Size.zero,
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
@@ -314,5 +311,43 @@ class LogScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<void> _copyAllToClipboard(BuildContext context) async {
+    final buffer = StringBuffer();
+    buffer.writeln('json: ${widget.json}');
+    buffer.writeln('--------------------------------');
+    final keys = [
+      ICEkycKeyResult.cropParam,
+      ICEkycKeyResult.pathImageFrontFull,
+      ICEkycKeyResult.pathImageBackFull,
+      ICEkycKeyResult.pathImageFaceFull,
+      ICEkycKeyResult.pathImageFaceFarFull,
+      ICEkycKeyResult.pathImageFaceNearFull,
+      ICEkycKeyResult.pathImageFaceScan3D,
+      ICEkycKeyResult.clientSessionResult,
+    ];
+
+    for (final key in keys) {
+      final content = widget.json[key];
+      if (content != null && content.toString().trim().isNotEmpty) {
+        buffer.writeln('$key:');
+        buffer.writeln(content);
+        buffer.writeln('\n---\n');
+      }
+    }
+
+    if (buffer.isNotEmpty) {
+      await Clipboard.setData(ClipboardData(text: buffer.toString()));
+      if (context.mounted) {
+        ShadToaster.of(context).show(
+          ShadToast(
+            title: Text('Đã sao chép tất cả'),
+            titleStyle: context.theme.textTheme.p.copyWith(color: Colors.white),
+            backgroundColor: context.theme.colorScheme.primary,
+          ),
+        );
+      }
+    }
   }
 }

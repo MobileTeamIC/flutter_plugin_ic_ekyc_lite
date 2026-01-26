@@ -1,12 +1,14 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_plugin_ic_ekyc/ekyc/ekyc.dart';
-import 'package:flutter_plugin_ic_ekyc/ekyc/services/ekyc_presentation.dart';
-import 'package:flutter_plugin_ic_ekyc/ekyc/services/enum_ekyc.dart';
+import 'package:flutter_plugin_ic_ekyc/flutter_plugin_ic_ekyc.dart';
+import 'package:flutter_plugin_ic_ekyc_example/service/shared_preference.dart';
 import 'package:flutter_plugin_ic_ekyc_example/view/log_screen.dart';
 import 'package:flutter_plugin_ic_ekyc_example/view/setting_screen.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 
-import '../service/shared_preference.dart';
+import '../theme/context.dart';
 
 class EkycScreen extends StatefulWidget {
   const EkycScreen({super.key});
@@ -16,22 +18,21 @@ class EkycScreen extends StatefulWidget {
 }
 
 class _EkycScreenState extends State<EkycScreen> {
-  // You can source these from secure storage/config later per your environment
   String _accessToken = '';
   String _tokenId = '';
   String _tokenKey = '';
   String _baseUrl = '';
-  LanguageSdk _languageSdk = LanguageSdk.icekyc_vi;
+  LanguageSdk _language = LanguageSdk.icekyc_vi;
   ModeButtonHeaderBar _modeButtonHeaderBar = ModeButtonHeaderBar.leftButton;
-  final TextEditingController _hashFrontOcrController = TextEditingController();
-  bool _isShowLogo = true;
+  bool _isShowLogo = false;
+
   @override
   void initState() {
     super.initState();
-    _loadSettings();
+    loadData();
   }
 
-  void _loadSettings() {
+  void loadData() {
     _accessToken = SharedPreferenceService.instance.getString(
       SharedPreferenceKeys.accessToken,
     );
@@ -44,7 +45,7 @@ class _EkycScreenState extends State<EkycScreen> {
     _baseUrl = SharedPreferenceService.instance.getString(
       SharedPreferenceKeys.baseUrl,
     );
-    _languageSdk =
+    _language =
         SharedPreferenceService.instance.getBool(
               SharedPreferenceKeys.isViLanguageMode,
               defaultValue: true,
@@ -64,298 +65,298 @@ class _EkycScreenState extends State<EkycScreen> {
     );
   }
 
-  @override
-  void dispose() {
-    _hashFrontOcrController.dispose();
-    super.dispose();
-  }
-
-  void _navigateToLog(Map<String, dynamic> json) {
+  /// Navigate to Log Screen
+  void _navigate(Map<String, dynamic> json) {
     if (json.isNotEmpty) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => LogScreen(json: json)),
+        MaterialPageRoute(builder: (_) => LogScreen(json: json)),
       );
     }
   }
 
-  void _showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            const Icon(Icons.error_outline, color: Colors.white),
-            const SizedBox(width: 8),
-            Expanded(child: Text(message)),
-          ],
-        ),
-        backgroundColor: Theme.of(context).colorScheme.error,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('eKYC'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SettingScreen()),
-              ).then((_) => _loadSettings());
-            },
-            tooltip: 'Cài đặt',
-          ),
-        ],
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Hash Input Section
-              _buildHashInputSection(),
-              const SizedBox(height: 24),
-              // Action Buttons
-              _buildActionButton(
-                icon: Icons.verified_user,
-                title: 'eKYC luồng đầy đủ',
-                description: 'Thực hiện toàn bộ quy trình xác thực',
-                onPressed: () => _handleFullEkyc(),
-              ),
-              const SizedBox(height: 12),
-              _buildActionButton(
-                icon: Icons.document_scanner,
-                title: 'Thực hiện OCR giấy tờ',
-                description: 'Quét và nhận dạng thông tin từ giấy tờ',
-                onPressed: () => _handleOcrOnly(),
-              ),
-              const SizedBox(height: 12),
-              _buildActionButton(
-                icon: Icons.credit_card,
-                title: 'OCR chỉ mặt trước',
-                description: 'Quét mặt trước của giấy tờ',
-                onPressed: () => _handleOcrFront(),
-              ),
-              const SizedBox(height: 12),
-              _buildActionButton(
-                icon: Icons.credit_card,
-                title: 'OCR chỉ mặt sau',
-                description: 'Quét mặt sau của giấy tờ',
-                onPressed: () => _handleOcrBack(),
-              ),
-              const SizedBox(height: 12),
-              _buildActionButton(
-                icon: Icons.face,
-                title: 'Kiểm tra khuôn mặt',
-                description: 'Xác thực khuôn mặt với ảnh giấy tờ',
-                onPressed: () => _handleFaceVerification(),
-              ),
-              const SizedBox(height: 12),
-              _buildActionButton(
-                icon: Icons.qr_code_scanner,
-                title: 'Quét QR code',
-                description: 'Quét mã QR từ giấy tờ',
-                onPressed: () => _handleScanQRCode(),
-              ),
-              const SizedBox(height: 16),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHashInputSection() {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.info_outline,
-                  size: 20,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'Hash Image Front (Tùy chọn)',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: _hashFrontOcrController,
-              decoration: const InputDecoration(
-                labelText: 'Hash image front from OCR front result',
-                hintText: 'Nhập hash từ kết quả OCR mặt trước',
-                helperText: 'Cần thiết cho OCR mặt sau và Face Verification',
-              ),
-              maxLines: 2,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildActionButton({
-    required IconData icon,
-    required String title,
-    required String description,
-    required VoidCallback onPressed,
-  }) {
-    return Card(
-      child: InkWell(
-        onTap: onPressed,
-        borderRadius: BorderRadius.circular(16),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primaryContainer,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  icon,
-                  color: Theme.of(context).colorScheme.primary,
-                  size: 24,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(title, style: Theme.of(context).textTheme.titleMedium),
-                    const SizedBox(height: 4),
-                    Text(
-                      description,
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                  ],
-                ),
-              ),
-              Icon(
-                Icons.arrow_forward_ios,
-                size: 16,
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Future<void> _handleFullEkyc() async {
+  // MARK: - eKYC Flows
+  Future<void> _fullEkyc() async {
     try {
       final config = ICEkycPresets.fullEkyc(
         accessToken: _accessToken,
         tokenId: _tokenId,
         tokenKey: _tokenKey,
-        languageSdk: _languageSdk,
+        changeBaseUrl: _baseUrl,
+        languageSdk: _language,
         modeButtonHeaderBar: _modeButtonHeaderBar,
         isShowLogo: _isShowLogo,
+        documentType: DocumentType.identityCard,
+        versionSdk: VersionSdk.proOval,
+        checkLivenessFace: LivenessFaceMode.standard,
+        validateDocumentType: ValidateDocumentType.basic,
       );
-      _navigateToLog(await ICEkyc.instance.startEkycFull(config));
+      _navigate(await ICEkyc.instance.startEkycFull(config));
     } on PlatformException catch (e) {
-      _showError("${e.code} - ${e.message}");
+      _showError("Error: ${e.code} - ${e.message}");
     }
   }
 
-  Future<void> _handleOcrOnly() async {
+  Future<void> _ocrOnly() async {
     try {
       final config = ICEkycPresets.ocrOnly(
         accessToken: _accessToken,
         tokenId: _tokenId,
         tokenKey: _tokenKey,
-        languageSdk: _languageSdk,
+        changeBaseUrl: _baseUrl,
+        languageSdk: _language,
         modeButtonHeaderBar: _modeButtonHeaderBar,
         isShowLogo: _isShowLogo,
+        documentType: DocumentType.identityCard,
+        validateDocumentType: ValidateDocumentType.basic,
       );
-      _navigateToLog(await ICEkyc.instance.startEkycOcr(config));
+      _navigate(await ICEkyc.instance.startEkycOcr(config));
     } on PlatformException catch (e) {
-      _showError("${e.code} - ${e.message}");
+      _showError("Error: ${e.code} - ${e.message}");
     }
   }
 
-  Future<void> _handleOcrFront() async {
+  Future<void> _ocrFront() async {
     try {
       final config = ICEkycPresets.ocrFront(
         accessToken: _accessToken,
         tokenId: _tokenId,
         tokenKey: _tokenKey,
-        languageSdk: _languageSdk,
+        changeBaseUrl: _baseUrl,
+        languageSdk: _language,
         modeButtonHeaderBar: _modeButtonHeaderBar,
         isShowLogo: _isShowLogo,
+        documentType: DocumentType.identityCard,
+        validateDocumentType: ValidateDocumentType.basic,
       );
-      _navigateToLog(await ICEkyc.instance.startEkycOcrFront(config));
+      _navigate(await ICEkyc.instance.startEkycOcrFront(config));
     } on PlatformException catch (e) {
-      _showError("${e.code} - ${e.message}");
+      _showError("Error: ${e.code} - ${e.message}");
     }
   }
 
-  Future<void> _handleOcrBack() async {
-    try {
-      final config = ICEkycPresets.ocrBack(
-        accessToken: _accessToken,
-        tokenId: _tokenId,
-        tokenKey: _tokenKey,
-        hashFrontOcr: _hashFrontOcrController.text,
-        languageSdk: _languageSdk,
-        modeButtonHeaderBar: _modeButtonHeaderBar,
-        isShowLogo: _isShowLogo,
-      );
-      _navigateToLog(await ICEkyc.instance.startEkycOcrBack(config));
-    } on PlatformException catch (e) {
-      _showError("${e.code} - ${e.message}");
-    }
-  }
-
-  Future<void> _handleFaceVerification() async {
+  Future<void> _faceVerification() async {
     try {
       final config = ICEkycPresets.faceVerification(
         accessToken: _accessToken,
         tokenId: _tokenId,
         tokenKey: _tokenKey,
-        languageSdk: _languageSdk,
+        languageSdk: _language,
         modeButtonHeaderBar: _modeButtonHeaderBar,
         isShowLogo: _isShowLogo,
+        versionSdk: VersionSdk.proOval,
+        checkLivenessFace: LivenessFaceMode.standard,
       );
-      _navigateToLog(await ICEkyc.instance.startEkycFace(config));
+      _navigate(await ICEkyc.instance.startEkycFace(config));
     } on PlatformException catch (e) {
-      _showError("${e.code} - ${e.message}");
+      _showError("Error: ${e.code} - ${e.message}");
     }
   }
 
-  Future<void> _handleScanQRCode() async {
+  Future<void> _scanQRCode() async {
     try {
       final config = ICEkycPresets.scanQRCode(
         accessToken: _accessToken,
         tokenId: _tokenId,
         tokenKey: _tokenKey,
-        languageSdk: _languageSdk,
+        languageSdk: _language,
         modeButtonHeaderBar: _modeButtonHeaderBar,
         isShowLogo: _isShowLogo,
       );
-      _navigateToLog(await ICEkyc.instance.startEkycScanQRCode(config));
+      _navigate(await ICEkyc.instance.startEkycScanQRCode(config));
     } on PlatformException catch (e) {
-      _showError("${e.code} - ${e.message}");
+      _showError("Error: ${e.code} - ${e.message}");
     }
+  }
+
+  // MARK: - Error UI
+  void _showError(String message) {
+    ShadToaster.of(context).show(
+      ShadToast.destructive(
+        title: Text(message),
+        titleStyle: context.theme.textTheme.p.copyWith(color: Colors.white),
+        backgroundColor: context.theme.colorScheme.destructive,
+      ),
+    );
+  }
+
+  // MARK: - UI
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        appBar: AppBar(
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.settings),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const SettingScreen(),
+                  ),
+                ).then((_) => loadData());
+              },
+              tooltip: 'Cài đặt',
+            ),
+          ],
+        ),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              Text("eKYC SDK", style: context.textTheme.h1),
+              const SizedBox(height: 16),
+              _ActionCard(
+                icon: Icons.badge,
+                title: "eKYC Đầy Đủ",
+                description1: "Thực hiện OCR giấy tờ (mặt trước + mặt sau)",
+                description2: "Xác thực khuôn mặt với liveness detection",
+                onTap: () async => _fullEkyc(),
+              ),
+              _ActionCard(
+                icon: Icons.credit_card,
+                title: "OCR Giấy Tờ",
+                description1: "Đọc thông tin từ CMND/CCCD/Hộ chiếu",
+                description2: "Chụp cả mặt trước và mặt sau",
+                onTap: () async => _ocrOnly(),
+              ),
+              _ActionCard(
+                icon: Icons.document_scanner,
+                title: "OCR Mặt Trước",
+                description1: "Chỉ đọc mặt trước giấy tờ",
+                description2: "Trích xuất thông tin cơ bản",
+                onTap: () async => _ocrFront(),
+              ),
+              _ActionCard(
+                icon: Icons.face,
+                title: "Xác Thực Khuôn Mặt",
+                description1: "Chụp ảnh khuôn mặt với oval guide",
+                description2: "Kiểm tra liveness và masked face",
+                onTap: () async => _faceVerification(),
+              ),
+              _ActionCard(
+                icon: Icons.qr_code_scanner,
+                title: "Quét Mã QR",
+                description1: "Quét mã QR trên CMND/CCCD/Hộ chiếu",
+                description2: "Lấy thông tin từ QR code",
+                onTap: () async => _scanQRCode(),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// ============================
+/// REUSABLE WIDGETS
+/// ============================
+class _ActionCard extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String description1;
+  final String description2;
+  final VoidCallback onTap;
+
+  const _ActionCard({
+    required this.icon,
+    required this.title,
+    required this.description1,
+    required this.description2,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      elevation: 0,
+      clipBehavior: Clip.antiAlias,
+      surfaceTintColor: theme.colorScheme.surfaceTint,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // LEFT ICON
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primaryContainer,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(icon, color: theme.colorScheme.onPrimaryContainer),
+              ),
+
+              const SizedBox(width: 16),
+
+              // TEXT CONTENT (EXPANDED)
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // TITLE
+                    Text(
+                      title,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+
+                    const SizedBox(height: 8),
+
+                    // DESCRIPTION 1
+                    _iconTextRow(context, theme, description1),
+
+                    const SizedBox(height: 6),
+
+                    // DESCRIPTION 2
+                    _iconTextRow(context, theme, description2),
+                  ],
+                ),
+              ),
+
+              const SizedBox(width: 8),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _iconTextRow(BuildContext context, ThemeData theme, String text) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(
+          Icons.check_circle_outline,
+          size: 18,
+          color: theme.colorScheme.primary,
+        ),
+        const SizedBox(width: 6),
+
+        Expanded(
+          child: Text(
+            text,
+            style: context.textTheme.small.copyWith(
+              color: context.colorScheme.mutedForeground,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    );
   }
 }
