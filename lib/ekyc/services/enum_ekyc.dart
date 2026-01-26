@@ -27,6 +27,7 @@ enum EkycLastScreen {
   cancelPermission,
   helpDocument,
   scanQRCode,
+  scanQRCodeFailed,
   captureFront,
   captureBack,
   helpOval,
@@ -56,6 +57,8 @@ enum EkycLastScreen {
         return EkycLastScreen.helpDocument;
       case 'ScanQRCode':
         return EkycLastScreen.scanQRCode;
+      case 'ScanQRCodeFailed':
+        return EkycLastScreen.scanQRCodeFailed;
       case 'CaptureFront':
         return EkycLastScreen.captureFront;
       case 'CaptureBack':
@@ -141,6 +144,8 @@ enum EkycLastScreen {
         return 'HelpDocument';
       case EkycLastScreen.scanQRCode:
         return 'ScanQRCode';
+      case EkycLastScreen.scanQRCodeFailed:
+        return 'ScanQRCodeFailed';
       case EkycLastScreen.captureFront:
         return 'CaptureFront';
       case EkycLastScreen.captureBack:
@@ -174,11 +179,11 @@ enum EkycStatus {
   /// Convert from string value (from native)
   static EkycStatus fromString(String value) {
     switch (value.toUpperCase()) {
-      case 'SUCCESS':
+      case 'IC_EKYC_SUCCESS':
         return EkycStatus.success;
-      case 'CANCELLED':
+      case 'IC_EKYC_CANCELLED':
         return EkycStatus.cancelled;
-      case 'FAILED':
+      case 'IC_EKYC_FAILED':
         return EkycStatus.failed;
       default:
         return EkycStatus.failed;
@@ -189,11 +194,11 @@ enum EkycStatus {
   String get value {
     switch (this) {
       case EkycStatus.success:
-        return 'SUCCESS';
+        return 'IC_EKYC_SUCCESS';
       case EkycStatus.cancelled:
-        return 'CANCELLED';
+        return 'IC_EKYC_CANCELLED';
       case EkycStatus.failed:
-        return 'FAILED';
+        return 'IC_EKYC_FAILED';
     }
   }
 }

@@ -1,7 +1,7 @@
 // swift-interface-format-version: 1.0
-// swift-compiler-version: Apple Swift version 5.9 (swiftlang-5.9.0.128.108 clang-1500.0.40.1)
-// swift-module-flags: -target arm64-apple-ios10.0 -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -Onone -module-name eKYCLib
-// swift-module-flags-ignorable: -enable-bare-slash-regex
+// swift-compiler-version: Apple Swift version 6.2.1 effective-5.10 (swiftlang-6.2.1.4.8 clang-1700.4.4.1)
+// swift-module-flags: -target arm64-apple-ios10.0 -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -Onone -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -module-name eKYCLib
+// swift-module-flags-ignorable: -no-verify-emitted-module-interface -formal-cxx-interoperability-mode=off -interface-compiler-version 6.2.1
 import Accelerate
 import Foundation
 import Swift
@@ -23,11 +23,11 @@ import _SwiftConcurrencyShims
   @objc override dynamic public init()
   @objc public static func createInstance()
   @objc public static func deleteInstance()
-  @objc deinit
   @objc public static func validate(bmp: UIKit.UIImage, cardConfig: eKYCLib.CardConfig) -> Swift.Bool
   @objc public static func validateV2(bmp: UIKit.UIImage, cardConfig: eKYCLib.CardConfig) -> eKYCLib.MESSAGE_RESULT
   @objc public static func validateCardFlipping(bmp: UIKit.UIImage) -> eKYCLib.MESSAGE_RESULT
   @objc public static func getDocType(bmp: UIKit.UIImage) -> eKYCLib.ID_TYPE_RESULT
+  @objc deinit
 }
 @objc public enum MESSAGE_RESULT : Swift.Int {
   case INVALID = -1
@@ -46,7 +46,9 @@ import _SwiftConcurrencyShims
   case CARD_LEFT = 23, CARD_TOP = 24, CARD_RIGHT = 25, CARD_BOTTOM = 26, CARD_BLUR = 27
   case CARD_NEAR = 28, CARD_FAR = 29, CARD_TILT = 30, LIVENESS_FAILED = 34, LIVENESS_OK = 35
   case CARD_FLIPPING = 31, CARD_FLIPPING_TIMEOUT = 32, CARD_FLIPPING_DONE = 33
+  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.Int)
+  #endif
   public typealias RawValue = Swift.Int
   public var rawValue: Swift.Int {
     get
@@ -60,7 +62,9 @@ import _SwiftConcurrencyShims
   case FACE_TURN_UP = 3
   case FACE_TURN_DOWN = 4
   case FACE_STRAIGHT = 5
+  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.Int)
+  #endif
   public typealias RawValue = Swift.Int
   public var rawValue: Swift.Int {
     get
@@ -72,7 +76,9 @@ import _SwiftConcurrencyShims
   case CMND = 1
   case BLX = 2
   case HC = 3
+  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.Int)
+  #endif
   public typealias RawValue = Swift.Int
   public var rawValue: Swift.Int {
     get
@@ -95,7 +101,9 @@ import _SwiftConcurrencyShims
   @objc public static func validate(bmp: UIKit.UIImage) -> eKYCLib.MESSAGE_RESULT
 }
 extension UIKit.UIImage {
+  #if compiler(>=5.3) && $NonescapableTypes
   public func rotate(radians: Swift.Float) -> UIKit.UIImage?
+  #endif
 }
 extension Swift.UnsafeMutablePointer {
   public func arrayCopying(elementCount: Swift.Int) -> [Pointee]

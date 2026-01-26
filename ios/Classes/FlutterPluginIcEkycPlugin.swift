@@ -255,6 +255,9 @@ extension FlutterPluginIcEkycPlugin {
         ekycVC.isEnableEncrypt = args[KeyArgumentMethod.isEnableEncrypt] as? Bool ?? false
         ekycVC.encryptPublicKey = args[KeyArgumentMethod.encryptPublicKey] as? String ?? ""
         //       ekycVC.modeUploadFile = args[KeyArgumentMethod.modeUploadFile] as? String ?? ""
+
+        ekycVC.numberTimesRetryScanQRCode = args[KeyArgumentMethod.numberTimesRetryScanQRCode] as? NSNumber
+        ekycVC.timeoutQRCodeFlow = args[KeyArgumentMethod.timeoutQRCodeFlow] as? NSNumber
     }
     
     private func configureDocumentOptions(for ekycVC: ICEkycCameraViewController, args: [String: Any]) {
@@ -372,12 +375,104 @@ extension FlutterPluginIcEkycPlugin {
         ekycVC.isAnimatedDismissed = args[KeyArgumentMethod.isAnimatedDismissed] as? Bool ?? false
     }
     
+   
+}
+
+//MARK: eKYC delegate
+extension FlutterPluginIcEkycPlugin: ICEkycCameraDelegate {
+    public func icEkycGetResult() {
+        UIDevice.current.isProximityMonitoringEnabled = false /// tắt cảm biến làm tối màn hình
+        let cropParam = ICEKYCSavedData.shared().cropParam;
+        let pathImageFrontFull = ICEKYCSavedData.shared().pathImageFrontFull;
+        let pathImageBackFull = ICEKYCSavedData.shared().pathImageBackFull;
+        let pathImageFaceFull = ICEKYCSavedData.shared().pathImageFaceFull;
+        let pathImageFaceFarFull = ICEKYCSavedData.shared().pathImageFaceFarFull;
+        let pathImageFaceNearFull = ICEKYCSavedData.shared().pathImageFaceNearFull;
+        let dataScan3D = ICEKYCSavedData.shared().dataScan3D;
+        let qrCodeResult = ICEKYCSavedData.shared().qrCodeResult;
+        let qrCodeResultDetail = ICEKYCSavedData.shared().qrCodeResultDetail;
+        let retryQRCodeResult = ICEKYCSavedData.shared().retryQRCodeResult;
+        // save file
+        let pathFaceScan3D = saveDataToDocuments(data: dataScan3D, fileName: "3dScanPortrait", fileExtension: "txt")
+        let clientSessionResult = ICEKYCSavedData.shared().clientSessionResult;
+
+        
+        let dict: [String: Any] = [
+            KeyResultConstantsEKYC.cropParam: cropParam,
+            KeyResultConstantsEKYC.pathImageFrontFull: pathImageFrontFull.path,
+            KeyResultConstantsEKYC.pathImageBackFull: pathImageBackFull.path,
+            KeyResultConstantsEKYC.pathImageFaceFull: pathImageFaceFull.path ,
+            KeyResultConstantsEKYC.pathImageFaceFarFull: pathImageFaceFarFull.path,
+            KeyResultConstantsEKYC.pathImageFaceNearFull: pathImageFaceNearFull.path,
+            KeyResultConstantsEKYC.pathImageFaceScan3D: dataScan3D.isEmpty ? "" : pathFaceScan3D?.path ?? "",
+            KeyResultConstantsEKYC.clientSessionResult: clientSessionResult,
+            KeyResultConstantsEKYC.qrCodeResult: qrCodeResult,
+            KeyResultConstantsEKYC.qrCodeResultDetail: qrCodeResultDetail,
+            KeyResultConstantsEKYC.retryQRCodeResult: retryQRCodeResult
+        ]
+        
+        do {
+            let jsonData = try JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted)
+            let jsonString = String(data: jsonData, encoding: String.Encoding.utf8)
+            pendingResult?(jsonString)
+            pendingResult = nil
+            
+        } catch {
+            print(error.localizedDescription)
+            pendingResult?(FlutterError(code: EKYCStatus.failed, message: error.localizedDescription, details: nil))
+            pendingResult = nil
+        }
+      
+    }
+    
+    public func icEkycCameraClosed(with type: ScreenType) {
+        UIDevice.current.isProximityMonitoringEnabled = false
+        
+        let lastScreen = convertScreenTypeToString(type)
+        
+        if type == ScanQRCodeFailed {
+            let qrCodeResult = ICEKYCSavedData.shared().qrCodeResult;
+            let qrCodeResultDetail = ICEKYCSavedData.shared().qrCodeResultDetail;
+            let retryQRCodeResult = ICEKYCSavedData.shared().retryQRCodeResult;
+            let clientSessionResult = ICEKYCSavedData.shared().clientSessionResult;
+
+            
+            let dict: [String: Any] = [
+                KeyResultConstantsEKYC.clientSessionResult: clientSessionResult,
+                KeyResultConstantsEKYC.qrCodeResult: qrCodeResult,
+                KeyResultConstantsEKYC.qrCodeResultDetail: qrCodeResultDetail,
+                KeyResultConstantsEKYC.retryQRCodeResult: retryQRCodeResult
+            ]
+            
+            do {
+                let jsonData = try JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted)
+                let jsonString = String(data: jsonData, encoding: String.Encoding.utf8)
+                pendingResult?(jsonString)
+                pendingResult = nil
+            } catch {
+                print(error.localizedDescription)
+                pendingResult?(FlutterError(code: EKYCStatus.failed, message: error.localizedDescription, details: nil))
+                pendingResult = nil
+            }
+        } else {
+            pendingResult?(FlutterError(code: EKYCStatus.cancelled,
+                                        message: "User cancelled eKYC flow with last step: \(lastScreen)",
+                                        details: ["lastScreen": lastScreen]))
+            pendingResult = nil
+        }
+    }
+    
+
+}
+
+//MARK: Hepler
+extension FlutterPluginIcEkycPlugin {
     /// Convert ScreenType enum to string representation
     /// - Parameter type: ScreenType enum value (Objective-C enum with NSUInteger rawValue)
     /// - Returns: String representation of the screen type
     private func convertScreenTypeToString(_ type: ScreenType) -> String {
         // ScreenType is an Objective-C enum with NSUInteger rawValue
-        // Values: CancelPermission=0, HelpDocument=1, ScanQRCode=2, etc.
+        // Values: CancelPermission=0, HelpDocument=1, ScanQRCode=2, ScanQRCodeFailed=3, etc.
         switch type.rawValue {
         case 0: // CancelPermission
             return "CancelPermission"
@@ -385,23 +480,25 @@ extension FlutterPluginIcEkycPlugin {
             return "HelpDocument"
         case 2: // ScanQRCode
             return "ScanQRCode"
-        case 3: // CaptureFront
+        case 3: // ScanQRCodeFailed
+            return "ScanQRCodeFailed"
+        case 4: // CaptureFront
             return "CaptureFront"
-        case 4: // CaptureBack
+        case 5: // CaptureBack
             return "CaptureBack"
-        case 5: // HelpOval
+        case 6: // HelpOval
             return "HelpOval"
-        case 6: // AuthenFarFace
+        case 7: // AuthenFarFace
             return "AuthenFarFace"
-        case 7: // AuthenNearFace
+        case 8: // AuthenNearFace
             return "AuthenNearFace"
-        case 8: // HelpFaceBasic
+        case 9: // HelpFaceBasic
             return "HelpFaceBasic"
-        case 9: // CaptureFaceBasic
+        case 10: // CaptureFaceBasic
             return "CaptureFaceBasic"
-        case 10: // Processing
+        case 11: // Processing
             return "Processing"
-        case 11: // Done
+        case 12: // Done
             return "Done"
         default:
             return "Unknown"
@@ -410,9 +507,9 @@ extension FlutterPluginIcEkycPlugin {
     
     // Định nghĩa các trạng thái để đồng bộ với bên Flutter
     struct EKYCStatus {
-        static let success = "SUCCESS"
-        static let cancelled = "CANCELLED"
-        static let failed = "FAILED"
+        static let success = "IC_EKYC_SUCCESS"
+        static let cancelled = "IC_EKYC_CANCELLED"
+        static let failed = "IC_EKYC_FAILED"
     }
     
     private func sendJsonResult(_ dict: [String: Any]) {
@@ -475,109 +572,3 @@ extension FlutterPluginIcEkycPlugin {
         }
     }
 }
-
-//MARK: eKYC delegate
-extension FlutterPluginIcEkycPlugin: ICEkycCameraDelegate {
-
-
-    
-    // // MARK: - Success Delegate
-    // public func icEkycGetResult() {
-    //     UIDevice.current.isProximityMonitoringEnabled = false
-        
-    //     // 1. Lấy dữ liệu từ SDK
-    //     let sharedData = ICEKYCSavedData.shared()
-        
-    //     // Kiểm tra an toàn (Optional Unwrapping) nếu cần, ở đây giả định SDK luôn trả về
-    //     let cropParam = sharedData.cropParam
-    //     let pathImageFrontFull = sharedData.pathImageFrontFull
-    //     let pathImageBackFull = sharedData.pathImageBackFull
-    //     let pathImageFaceFull = sharedData.pathImageFaceFull
-    //     let pathImageFaceFarFull = sharedData.pathImageFaceFarFull
-    //     let pathImageFaceNearFull = sharedData.pathImageFaceNearFull
-    //     let dataScan3D = sharedData.dataScan3D
-    //     let clientSessionResult = sharedData.clientSessionResult
-        
-    //     // Save file 3D Scan
-    //     let pathFaceScan3D = saveDataToDocuments(data: dataScan3D, fileName: "3dScanPortrait", fileExtension: "txt")
-        
-    //     // 2. Tạo Dictionary chứa DATA thực tế
-    //     let dataDict: [String: Any] = [
-    //         KeyResultConstantsEKYC.cropParam: cropParam,
-    //         KeyResultConstantsEKYC.pathImageFrontFull: pathImageFrontFull.path,
-    //         KeyResultConstantsEKYC.pathImageBackFull: pathImageBackFull.path ,
-    //         KeyResultConstantsEKYC.pathImageFaceFull: pathImageFaceFull.path ,
-    //         KeyResultConstantsEKYC.pathImageFaceFarFull: pathImageFaceFarFull.path ,
-    //         KeyResultConstantsEKYC.pathImageFaceNearFull: pathImageFaceNearFull.path ,
-    //         KeyResultConstantsEKYC.pathImageFaceScan3D: dataScan3D.isEmpty ? "" : (pathFaceScan3D?.path ?? ""),
-    //         KeyResultConstantsEKYC.clientSessionResult: clientSessionResult
-    //     ]
-        
-    //     // 3. Đóng gói theo cấu trúc chuẩn: Status + Data
-    //     let finalResponse: [String: Any] = [
-    //         "status": EKYCStatus.success,
-    //         "data": dataDict
-    //     ]
-        
-    //     // 4. Serialize sang JSON String và trả về Flutter
-    //     sendJsonResult(finalResponse)
-    // }
-    
-    // public func icEkycCameraClosed(with type: ScreenType) {
-    //     UIDevice.current.isProximityMonitoringEnabled = false
-        
-    //     let finalResponse: [String: Any] = [
-    //         "status": EKYCStatus.cancelled,
-    //         "data": ["lastScreen": convertScreenTypeToString(type)]
-    //     ]
-        
-    //     sendJsonResult(finalResponse)
-    // }
-    
-    public func icEkycGetResult() {
-        UIDevice.current.isProximityMonitoringEnabled = false /// tắt cảm biến làm tối màn hình
-        let cropParam = ICEKYCSavedData.shared().cropParam;
-        let pathImageFrontFull = ICEKYCSavedData.shared().pathImageFrontFull;
-        let pathImageBackFull = ICEKYCSavedData.shared().pathImageBackFull;
-        let pathImageFaceFull = ICEKYCSavedData.shared().pathImageFaceFull;
-        let pathImageFaceFarFull = ICEKYCSavedData.shared().pathImageFaceFarFull;
-        let pathImageFaceNearFull = ICEKYCSavedData.shared().pathImageFaceNearFull;
-        let dataScan3D = ICEKYCSavedData.shared().dataScan3D;
-        // save file
-        let pathFaceScan3D = saveDataToDocuments(data: dataScan3D, fileName: "3dScanPortrait", fileExtension: "txt")
-        let clientSessionResult = ICEKYCSavedData.shared().clientSessionResult;
-        
-        let dict: [String: Any] = [
-            KeyResultConstantsEKYC.cropParam: cropParam,
-            KeyResultConstantsEKYC.pathImageFrontFull: pathImageFrontFull.path,
-            KeyResultConstantsEKYC.pathImageBackFull: pathImageBackFull.path,
-            KeyResultConstantsEKYC.pathImageFaceFull: pathImageFaceFull.path ,
-            KeyResultConstantsEKYC.pathImageFaceFarFull: pathImageFaceFarFull.path,
-            KeyResultConstantsEKYC.pathImageFaceNearFull: pathImageFaceNearFull.path,
-            KeyResultConstantsEKYC.pathImageFaceScan3D: dataScan3D.isEmpty ? "" : pathFaceScan3D?.path ?? "",
-            KeyResultConstantsEKYC.clientSessionResult: clientSessionResult
-        ]
-        
-        do {
-            let jsonData = try JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted)
-            let jsonString = String(data: jsonData, encoding: String.Encoding.utf8)
-            pendingResult?(jsonString)
-            pendingResult = nil
-            
-        } catch {
-            print(error.localizedDescription)
-            pendingResult?(FlutterError(code: "JSON_ERROR", message: error.localizedDescription, details: nil))
-            pendingResult = nil
-        }
-      
-    }
-    
-    public func icEkycCameraClosed(with type: ScreenType) {
-        UIDevice.current.isProximityMonitoringEnabled = false
-        pendingResult?(FlutterError(code: "CANCELLED", message: "User cancelled eKYC flow", details: nil))
-        pendingResult = nil
-    }
-    
-
-}
-

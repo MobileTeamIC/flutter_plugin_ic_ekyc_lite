@@ -1,5 +1,4 @@
 import 'services/ekyc_config.dart';
-import 'services/ekyc_response.dart';
 import 'services/ekyc_method_channel.dart';
 
 /// Main eKYC service

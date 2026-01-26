@@ -19,6 +19,8 @@ class _SettingScreenState extends State<SettingScreen> {
   final TextEditingController _tokenIdController = TextEditingController();
   final TextEditingController _tokenKeyController = TextEditingController();
   final TextEditingController _baseUrlController = TextEditingController();
+  final TextEditingController _numberTimesRetryScanQRCodeController = TextEditingController();
+  final TextEditingController _timeoutQRCodeFlowController = TextEditingController();
   bool _isLoading = false;
 
   LanguageSdk _languageMode = LanguageSdk.icekyc_vi;
@@ -63,6 +65,17 @@ class _SettingScreenState extends State<SettingScreen> {
       SharedPreferenceKeys.isShowLogo,
       defaultValue: false,
     );
+    
+    // QR Code configuration: null means not set
+    final retryCount = SharedPreferenceService.instance.getInt(
+      SharedPreferenceKeys.numberTimesRetryScanQRCode,
+    );
+    _numberTimesRetryScanQRCodeController.text = retryCount?.toString() ?? '';
+    
+    final timeout = SharedPreferenceService.instance.getInt(
+      SharedPreferenceKeys.timeoutQRCodeFlow,
+    );
+    _timeoutQRCodeFlowController.text = timeout?.toString() ?? '';
   }
 
   @override
@@ -71,6 +84,8 @@ class _SettingScreenState extends State<SettingScreen> {
     _tokenIdController.dispose();
     _tokenKeyController.dispose();
     _baseUrlController.dispose();
+    _numberTimesRetryScanQRCodeController.dispose();
+    _timeoutQRCodeFlowController.dispose();
     super.dispose();
   }
 
@@ -82,6 +97,7 @@ class _SettingScreenState extends State<SettingScreen> {
     setState(() => _isLoading = true);
 
     try {
+      // Save basic settings
       await Future.wait([
         SharedPreferenceService.instance.setString(
           SharedPreferenceKeys.accessToken,
@@ -112,6 +128,37 @@ class _SettingScreenState extends State<SettingScreen> {
           _isShowLogo,
         ),
       ]);
+      
+      // Handle QR Code configuration: save null by removing key if empty
+      final retryText = _numberTimesRetryScanQRCodeController.text.trim();
+      if (retryText.isEmpty) {
+        await SharedPreferenceService.instance.remove(
+          SharedPreferenceKeys.numberTimesRetryScanQRCode,
+        );
+      } else {
+        final retryValue = int.tryParse(retryText);
+        if (retryValue != null) {
+          await SharedPreferenceService.instance.setInt(
+            SharedPreferenceKeys.numberTimesRetryScanQRCode,
+            retryValue,
+          );
+        }
+      }
+      
+      final timeoutText = _timeoutQRCodeFlowController.text.trim();
+      if (timeoutText.isEmpty) {
+        await SharedPreferenceService.instance.remove(
+          SharedPreferenceKeys.timeoutQRCodeFlow,
+        );
+      } else {
+        final timeoutValue = int.tryParse(timeoutText);
+        if (timeoutValue != null) {
+          await SharedPreferenceService.instance.setInt(
+            SharedPreferenceKeys.timeoutQRCodeFlow,
+            timeoutValue,
+          );
+        }
+      }
 
       if (mounted) {
         ShadToaster.of(context).show(
@@ -267,6 +314,21 @@ class _SettingScreenState extends State<SettingScreen> {
                           placeholder: 'Nhập Token Key',
                           controller: _tokenKeyController,
                         ),
+
+                        // QR Code Configuration
+                        _titleAndNumberFormField(
+                          id: 'number_times_retry_scan_qrcode',
+                          title: 'Số lần thử lại quét QR Code',
+                          placeholder: 'Để trống để dùng mặc định SDK',
+                          controller: _numberTimesRetryScanQRCodeController,
+                        ),
+
+                        _titleAndNumberFormField(
+                          id: 'timeout_qrcode_flow',
+                          title: 'Timeout QR Code Flow (giây)',
+                          placeholder: 'Để trống để dùng mặc định SDK',
+                          controller: _timeoutQRCodeFlowController,
+                        ),
                       ],
                     ),
                   ),
@@ -370,6 +432,24 @@ class _SettingScreenState extends State<SettingScreen> {
       children: [
         Text(title, style: Theme.of(context).textTheme.titleSmall),
         widget,
+      ],
+    );
+  }
+
+  _titleAndNumberFormField({
+    required String id,
+    required String title,
+    required String placeholder,
+    required TextEditingController controller,
+  }) {
+    return ShadInputFormField(
+      id: id,
+      label: Text(title),
+      placeholder: Text(placeholder),
+      controller: controller,
+      keyboardType: TextInputType.number,
+      inputFormatters: [
+        FilteringTextInputFormatter.allow(RegExp(r'^-?\d*')), // Allow negative numbers
       ],
     );
   }

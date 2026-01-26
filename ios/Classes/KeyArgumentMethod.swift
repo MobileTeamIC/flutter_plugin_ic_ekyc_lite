@@ -29,6 +29,9 @@ struct KeyArgumentMethod {
     static let isEnableEncrypt = "is_enable_encrypt"
     static let encryptPublicKey = "encrypt_public_key"
     static let modeUploadFile = "mode_upload_file"
+
+    static let numberTimesRetryScanQRCode = "number_times_retry_scan_qr_code"
+    static let timeoutQRCodeFlow = "timeout_qr_code_flow"
  
     /*========== CÁC THUỘC TÍNH VỀ GIẤY TỜ ==========*/
     static let documentType = "document_type"
@@ -149,4 +152,9 @@ struct KeyResultConstantsEKYC {
     static let pathImageFaceNearFull = "PATH_IMAGE_FACE_NEAR_FULL"
     static let pathImageFaceScan3D = "PATH_FACE_SCAN3D"
     static let clientSessionResult = "CLIENT_SESSION_RESULT"
+    
+    // QR Code results
+    static let qrCodeResult = "QR_CODE_RESULT"
+    static let qrCodeResultDetail = "QR_CODE_RESULT_DETAIL"
+    static let retryQRCodeResult = "RETRY_QR_CODE_RESULT"
 }

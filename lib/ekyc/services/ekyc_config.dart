@@ -136,6 +136,8 @@ class ICEkycConfig {
   final bool? isEnableCheckSimulator;
   final bool? isEnableCheckJailbroken;
   final bool? isAnimatedDismissed;
+  final int? numberTimesRetryScanQRCode;
+  final int? timeoutQRCodeFlow;
 
   const ICEkycConfig({
     this.accessToken,
@@ -257,6 +259,8 @@ class ICEkycConfig {
     this.isEnableCheckSimulator,
     this.isEnableCheckJailbroken,
     this.isAnimatedDismissed,
+    this.numberTimesRetryScanQRCode,
+    this.timeoutQRCodeFlow,
   });
 
   /// Convert to Map for method channel
@@ -383,6 +387,10 @@ class ICEkycConfig {
     if (isEnableCheckSimulator != null) map['is_enable_check_simulator'] = isEnableCheckSimulator!;
     if (isEnableCheckJailbroken != null) map['is_enable_check_jailbroken'] = isEnableCheckJailbroken!;
     if (isAnimatedDismissed != null) map['is_animated_dismissed'] = isAnimatedDismissed!;
+
+    if (numberTimesRetryScanQRCode != null) map['number_times_retry_scan_qr_code'] = numberTimesRetryScanQRCode!;
+    if (timeoutQRCodeFlow != null) map['timeout_qr_code_flow'] = timeoutQRCodeFlow!;
+    
     return map;
   }
 }

@@ -99,4 +99,8 @@ class SharedPreferenceKeys {
   static const String isViLanguageMode = 'is_vi_language_mode';
   static const String modeButtonHeaderBar = 'mode_button_header_bar';
   static const String isShowLogo = 'is_show_logo';
+  
+  // QR Code configuration
+  static const String numberTimesRetryScanQRCode = 'number_times_retry_scan_qrcode';
+  static const String timeoutQRCodeFlow = 'timeout_qrcode_flow';
 }

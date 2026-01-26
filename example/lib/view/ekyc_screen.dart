@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -25,6 +26,8 @@ class _EkycScreenState extends State<EkycScreen> {
   LanguageSdk _language = LanguageSdk.icekyc_vi;
   ModeButtonHeaderBar _modeButtonHeaderBar = ModeButtonHeaderBar.leftButton;
   bool _isShowLogo = false;
+  int? _numberTimesRetryScanQRCode;
+  int? _timeoutQRCodeFlow;
 
   @override
   void initState() {
@@ -63,6 +66,15 @@ class _EkycScreenState extends State<EkycScreen> {
       SharedPreferenceKeys.isShowLogo,
       defaultValue: false,
     );
+    
+    // QR Code configuration: pass null directly to SDK if not set
+    _numberTimesRetryScanQRCode = SharedPreferenceService.instance.getInt(
+      SharedPreferenceKeys.numberTimesRetryScanQRCode,
+    );
+    
+    _timeoutQRCodeFlow = SharedPreferenceService.instance.getInt(
+      SharedPreferenceKeys.timeoutQRCodeFlow,
+    );
   }
 
   /// Navigate to Log Screen
@@ -93,7 +105,11 @@ class _EkycScreenState extends State<EkycScreen> {
       );
       _navigate(await ICEkyc.instance.startEkycFull(config));
     } on PlatformException catch (e) {
-      _showError("Error: ${e.code} - ${e.message}");
+      if (e.code == EkycStatus.cancelled.value) {
+        _showError("User cancelled eKYC flow with last step: ${e.message}");
+      } else {
+        _showError("Error: ${e.code} - ${e.message}");
+      }
     }
   }
 
@@ -131,7 +147,11 @@ class _EkycScreenState extends State<EkycScreen> {
       );
       _navigate(await ICEkyc.instance.startEkycOcrFront(config));
     } on PlatformException catch (e) {
-      _showError("Error: ${e.code} - ${e.message}");
+      if (e.code == EkycStatus.cancelled.value) {
+        _showError("User cancelled eKYC flow with last step: ${e.message}");
+      } else {
+        _showError("Error: ${e.code} - ${e.message}");
+      }
     }
   }
 
@@ -162,10 +182,16 @@ class _EkycScreenState extends State<EkycScreen> {
         languageSdk: _language,
         modeButtonHeaderBar: _modeButtonHeaderBar,
         isShowLogo: _isShowLogo,
+        numberTimesRetryScanQRCode: _numberTimesRetryScanQRCode,
+        timeoutQRCodeFlow: _timeoutQRCodeFlow,
       );
       _navigate(await ICEkyc.instance.startEkycScanQRCode(config));
     } on PlatformException catch (e) {
-      _showError("Error: ${e.code} - ${e.message}");
+      if (e.code == EkycStatus.cancelled.value) {
+        _showError("User cancelled eKYC flow with last step: ${e.message}");
+      } else {
+        _showError("Error: ${e.code} - ${e.message}");
+      }
     }
   }
 

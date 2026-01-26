@@ -144,10 +144,49 @@ class _LogScreenState extends State<LogScreen> {
                     title: 'Path Face Scan 3D',
                     content: widget.json[ICEkycKeyResult.pathImageFaceScan3D],
                   ),
+                  const SizedBox(height: 12),
+                  
+                  // QR Code Results
+                  _buildLogItem(
+                    context,
+                    icon: Icons.qr_code,
+                    title: 'QR Code Result',
+                    content: widget.json[ICEkycKeyResult.qrCodeResult],
+                  ),
+                  const SizedBox(height: 12),
+                  _buildLogItem(
+                    context,
+                    icon: Icons.qr_code_scanner,
+                    title: 'QR Code Result Detail (Map)',
+                    content: _formatMapToJson(widget.json[ICEkycKeyResult.qrCodeResultDetail]),
+                  ),
+                  const SizedBox(height: 12),
+                  _buildLogItem(
+                    context,
+                    icon: Icons.sync_problem,
+                    title: 'Retry QR Code Result (Map)',
+                    content: _formatMapToJson(widget.json[ICEkycKeyResult.retryQRCodeResult]),
+                  ),
                   const SizedBox(height: 16),
                 ],
               ),
     );
+  }
+
+  /// Helper method to format Map as pretty JSON string
+  String? _formatMapToJson(dynamic data) {
+    if (data == null) return null;
+    
+    if (data is Map) {
+      try {
+        const encoder = JsonEncoder.withIndent('  ');
+        return encoder.convert(data);
+      } catch (e) {
+        return data.toString();
+      }
+    }
+    
+    return data.toString();
   }
 
   Widget _buildSafeImage(String? path, String label) {
@@ -326,6 +365,9 @@ class _LogScreenState extends State<LogScreen> {
       ICEkycKeyResult.pathImageFaceNearFull,
       ICEkycKeyResult.pathImageFaceScan3D,
       ICEkycKeyResult.clientSessionResult,
+      ICEkycKeyResult.qrCodeResult,
+      ICEkycKeyResult.qrCodeResultDetail,
+      ICEkycKeyResult.retryQRCodeResult,
     ];
 
     for (final key in keys) {

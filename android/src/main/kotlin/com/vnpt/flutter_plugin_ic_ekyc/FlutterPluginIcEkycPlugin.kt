@@ -153,6 +153,9 @@ class FlutterPluginIcEkycPlugin : FlutterPlugin, ActivityAware ,MethodCallHandle
                             data.getStringExtra(KeyResultConstants.PATH_FACE_SCAN3D)
                         val clientSessionResult =
                             data.getStringExtra(KeyResultConstants.CLIENT_SESSION_RESULT)
+                        var qrCodeResult = data.getStringExtra(KeyResultConstants.QR_CODE_RESULT)
+                        var qrCodeResultDetail = data.getStringExtra(KeyResultConstants.DETAIL_QR_CODE_RESULT)
+                        var retryQRCodeResult = data.getStringExtra(KeyResultConstants.RETRY_QRCODE_RESULT)
                         pendingResult.success(
                             JSONObject().apply {
                                 putSafe(KeyResultConstants.CROP_PARAM, cropPram)
@@ -178,13 +181,17 @@ class FlutterPluginIcEkycPlugin : FlutterPlugin, ActivityAware ,MethodCallHandle
                                     KeyResultConstants.CLIENT_SESSION_RESULT,
                                     clientSessionResult
                                 )
+                                putSafe(KeyResultConstantsEKYC.QR_CODE_RESULT, qrCodeResult)
+                                putSafe(KeyResultConstantsEKYC.QR_CODE_RESULT_DETAIL, qrCodeResultDetail)
+                                putSafe(KeyResultConstantsEKYC.RETRY_QR_CODE_RESULT, retryQRCodeResult)
+                                
                             }.toString()
                         )
                     } else {
-                        pendingResult.error("CANCELLED", "User canceled the operation", null)
+                        pendingResult.error("IC_EKYC_CANCELLED", "User canceled the operation", null)
                     }
                 } else {
-                    pendingResult.error("CANCELLED", "User canceled the operation", null)
+                    pendingResult.error("IC_EKYC_CANCELLED", "User canceled the operation", null)
                 }
             }
         }
@@ -438,6 +445,16 @@ class FlutterPluginIcEkycPlugin : FlutterPlugin, ActivityAware ,MethodCallHandle
     ///   - is_show_logo: Bật/tắt hiển thị LOGO thương hiệu ("true"/"false")
     private fun Activity.getIntentEkycScanQRCode(json: JSONObject): Intent {
         val intent = getBaseIntent(VnptQRCodeActivity::class.java, json)
+
+        intent.putExtra(
+            KeyIntentConstants.NUMBER_TIMES_RETRY_SCAN_QR_CODE,
+          json.optInt(KeyArgumentMethod.NUMBER_TIMES_RETRY_SCAN_QR_CODE, Int.MAX_VALUE)
+        )
+
+        intent.putExtra(
+            KeyIntentConstants.TIMEOUT_QR_CODE_FLOW,
+            json.optInt(KeyArgumentMethod.TIMEOUT_QR_CODE_FLOW, Int.MAX_VALUE)
+        )
         return intent
     }
 
@@ -540,9 +557,9 @@ class FlutterPluginIcEkycPlugin : FlutterPlugin, ActivityAware ,MethodCallHandle
     // Mark: - Helper
 
     object EKYCStatus {
-        const val SUCCESS = "SUCCESS"
-        const val CANCELLED = "CANCELLED"
-        const val FAILED = "FAILED"
+        const val SUCCESS = "IC_EKYC_SUCCESS"
+        const val CANCELLED = "IC_EKYC_CANCELLED"
+        const val FAILED = "IC_EKYC_FAILED"
     }
     private fun parseJsonFromArgs(call: MethodCall): JSONObject {
         return try {

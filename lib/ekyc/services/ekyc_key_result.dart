@@ -7,4 +7,13 @@ class ICEkycKeyResult {
   static const String pathImageFaceNearFull = "PATH_IMAGE_FACE_NEAR_FULL";
   static const String pathImageFaceScan3D = "PATH_FACE_SCAN3D";
   static const String clientSessionResult = "CLIENT_SESSION_RESULT";
+
+  // Dữ liệu việc QUÉT mã QR
+  static const String qrCodeResult = "QR_CODE_RESULT";
+
+  // Dữ liệu việc QUÉT mã QR [StringJson]
+  static const String qrCodeResultDetail = "QR_CODE_RESULT_DETAIL";
+
+  // Dữ liệu lỗi khi thực hiện retry scan QR [StringJson]
+  static const String retryQRCodeResult = "RETRY_QR_CODE_RESULT";
 }

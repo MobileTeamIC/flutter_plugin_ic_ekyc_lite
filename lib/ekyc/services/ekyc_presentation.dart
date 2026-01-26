@@ -26,7 +26,8 @@ class ICEkycPresets {
     bool isShowQRCodeResult = false,
     String challengeCode = '',
     ModeButtonHeaderBar modeButtonHeaderBar = ModeButtonHeaderBar.leftButton,
-
+    int? numberTimesRetryScanQRCode,
+    int? timeoutQRCodeFlow,
   }) => ICEkycConfig(
     accessToken: accessToken,
     tokenId: tokenId,
@@ -49,6 +50,8 @@ class ICEkycPresets {
     isShowQRCodeResult: isShowQRCodeResult,
     challengeCode: challengeCode,
     modeButtonHeaderBar: modeButtonHeaderBar,
+    numberTimesRetryScanQRCode: numberTimesRetryScanQRCode,
+    timeoutQRCodeFlow: timeoutQRCodeFlow,
   );
 
   /// Create configuration for OCR only flow
@@ -70,6 +73,8 @@ class ICEkycPresets {
     bool isShowQRCodeResult = false,
     String challengeCode = '',
     ModeButtonHeaderBar modeButtonHeaderBar = ModeButtonHeaderBar.leftButton,
+    int? numberTimesRetryScanQRCode,
+    int? timeoutQRCodeFlow,
   }) => ICEkycConfig(
     accessToken: accessToken,
     tokenId: tokenId,
@@ -294,6 +299,9 @@ class ICEkycPresets {
   ///   - is_enable_gotit: Bật/tắt nút "Bỏ qua hướng dẫn" ("true"/"false")
   ///   - language_sdk: Ngôn ngữ SDK ("icekyc_vi", "icekyc_en")
   ///   - is_show_logo: Bật/tắt hiển thị LOGO thương hiệu ("true"/"false")
+  ///   - mode_button_header_bar: Kiểu nút trong header bar ("left_button", "right_button")
+  ///   - number_times_retry_scan_qr_code: Số lần thử quét QR code
+  ///   - timeout_qr_code_flow: Thời gian timeout cho luồng quét QR code
   /// Create configuration for scan QR code flow
   static ICEkycConfig scanQRCode({
     required String accessToken,
@@ -301,16 +309,23 @@ class ICEkycPresets {
     required String tokenKey,
     bool isShowTutorial = true,
     bool isEnableGotIt = true,
+    bool isTurnOffCallService = true,
     LanguageSdk languageSdk = LanguageSdk.icekyc_vi,
     bool isShowLogo = false,
     ModeButtonHeaderBar modeButtonHeaderBar = ModeButtonHeaderBar.leftButton,
+    int? numberTimesRetryScanQRCode,
+    int? timeoutQRCodeFlow,
   }) => ICEkycConfig(
     accessToken: accessToken,
     tokenId: tokenId,
     tokenKey: tokenKey,
+    isTurnOffCallService: isTurnOffCallService,
     isShowTutorial: isShowTutorial,
     isEnableGotIt: isEnableGotIt,
     languageSdk: languageSdk,
     isShowLogo: isShowLogo,
+    modeButtonHeaderBar: modeButtonHeaderBar,
+    numberTimesRetryScanQRCode: numberTimesRetryScanQRCode,
+    timeoutQRCodeFlow: timeoutQRCodeFlow,
   );
 }

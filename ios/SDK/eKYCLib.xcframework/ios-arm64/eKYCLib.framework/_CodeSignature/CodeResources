@@ -6,39 +6,35 @@
 	<dict>
 		<key>Headers/eKYCLib-Swift.h</key>
 		<data>
-		0HtS+WV6MLps1tZTyPrFzRkTEq8=
+		Aj16UeoNE9xHR0RBvKFJLuipOPU=
 		</data>
 		<key>Headers/eKYCLib.h</key>
 		<data>
-		asEmpFqPVsFcaGnQMlvGBy9j0dI=
+		XzaJ+fV8oFDYZX3xP8xCXbJ6fkM=
 		</data>
 		<key>Info.plist</key>
 		<data>
-		sDiWjgcX7M5esrlv+C8ShL2hVPY=
-		</data>
-		<key>Modules/eKYCLib.swiftmodule/Project/arm64-apple-ios.swiftsourceinfo</key>
-		<data>
-		LoIKCLH9ZNfQ52Fgd5ThElloBQQ=
+		wHpi/N/OCml/2nZaTGIseijp2b8=
 		</data>
 		<key>Modules/eKYCLib.swiftmodule/arm64-apple-ios.abi.json</key>
 		<data>
-		TEW5SKCOqksR+Fxph8+bYr6xvJw=
+		ui2sVGLzbUNHJiwR4lqUAoO7hrM=
 		</data>
 		<key>Modules/eKYCLib.swiftmodule/arm64-apple-ios.private.swiftinterface</key>
 		<data>
-		WRgbwgicUqE5cVhuKxJzyUqeNJw=
+		TYgDFOE7XmP5/CCAh17sEj8Xkdw=
 		</data>
 		<key>Modules/eKYCLib.swiftmodule/arm64-apple-ios.swiftdoc</key>
 		<data>
-		eqYMT7e0MHkxLM94Eeq7u+BdhX0=
+		kTepzNI2Ezom1nFyJLbaYX4Ml44=
 		</data>
 		<key>Modules/eKYCLib.swiftmodule/arm64-apple-ios.swiftinterface</key>
 		<data>
-		WRgbwgicUqE5cVhuKxJzyUqeNJw=
+		TYgDFOE7XmP5/CCAh17sEj8Xkdw=
 		</data>
 		<key>Modules/eKYCLib.swiftmodule/arm64-apple-ios.swiftmodule</key>
 		<data>
-		bCl8V/vnXnF6O8LcdRkMcVagMyM=
+		W224PZeOl55cOQsEFnubJPRqWOg=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -83,88 +79,77 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			0HtS+WV6MLps1tZTyPrFzRkTEq8=
+			Aj16UeoNE9xHR0RBvKFJLuipOPU=
 			</data>
 			<key>hash2</key>
 			<data>
-			S74XVAY3MFiVBgGTU+aUV995FHPd6uYCD3svjKN+MYQ=
+			SMVRyy0UIkXSyXQK9qi0rof8b0Tx5SSWWPxdZH2Xg7c=
 			</data>
 		</dict>
 		<key>Headers/eKYCLib.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			asEmpFqPVsFcaGnQMlvGBy9j0dI=
+			XzaJ+fV8oFDYZX3xP8xCXbJ6fkM=
 			</data>
 			<key>hash2</key>
 			<data>
-			Go60Ccb5WYIzD21dZ9i8BqkMMMyZJxAR32sjqk+E7dw=
-			</data>
-		</dict>
-		<key>Modules/eKYCLib.swiftmodule/Project/arm64-apple-ios.swiftsourceinfo</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			LoIKCLH9ZNfQ52Fgd5ThElloBQQ=
-			</data>
-			<key>hash2</key>
-			<data>
-			5b6RqJ5g7cgMND2gBM5f0cBxvivmsfKxpwPmxe84MyQ=
+			/SBmA0tCAjKuiv9UEaE9m4Srh+tPKgCIHpcl++ehsNc=
 			</data>
 		</dict>
 		<key>Modules/eKYCLib.swiftmodule/arm64-apple-ios.abi.json</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			TEW5SKCOqksR+Fxph8+bYr6xvJw=
+			ui2sVGLzbUNHJiwR4lqUAoO7hrM=
 			</data>
 			<key>hash2</key>
 			<data>
-			YpuggEoOYpVpgtKfwp8Es/kQf6x+QEr8ic52vSH5hNY=
+			Cacg1JY1+B9e8ghz9DG3QNMpM33DEiAbbSFa71WAEoE=
 			</data>
 		</dict>
 		<key>Modules/eKYCLib.swiftmodule/arm64-apple-ios.private.swiftinterface</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			WRgbwgicUqE5cVhuKxJzyUqeNJw=
+			TYgDFOE7XmP5/CCAh17sEj8Xkdw=
 			</data>
 			<key>hash2</key>
 			<data>
-			U/M7YI7fzK7lgFU6VI0jDJH5/rCGt366r8dwlEKKNZo=
+			E80U4QSp+SrLRAbZfN6+w4hDjNjEwdfUk79uZXoE2JI=
 			</data>
 		</dict>
 		<key>Modules/eKYCLib.swiftmodule/arm64-apple-ios.swiftdoc</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			eqYMT7e0MHkxLM94Eeq7u+BdhX0=
+			kTepzNI2Ezom1nFyJLbaYX4Ml44=
 			</data>
 			<key>hash2</key>
 			<data>
-			ITzP55v5Mu9tq2quF91atKGp8OmvZteUXVPtIdAZe84=
+			vqnkyytrQ7SFWCIfUzhwiNLRZxsGC2WUuOtanqAnRjM=
 			</data>
 		</dict>
 		<key>Modules/eKYCLib.swiftmodule/arm64-apple-ios.swiftinterface</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			WRgbwgicUqE5cVhuKxJzyUqeNJw=
+			TYgDFOE7XmP5/CCAh17sEj8Xkdw=
 			</data>
 			<key>hash2</key>
 			<data>
-			U/M7YI7fzK7lgFU6VI0jDJH5/rCGt366r8dwlEKKNZo=
+			E80U4QSp+SrLRAbZfN6+w4hDjNjEwdfUk79uZXoE2JI=
 			</data>
 		</dict>
 		<key>Modules/eKYCLib.swiftmodule/arm64-apple-ios.swiftmodule</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			bCl8V/vnXnF6O8LcdRkMcVagMyM=
+			W224PZeOl55cOQsEFnubJPRqWOg=
 			</data>
 			<key>hash2</key>
 			<data>
-			tSOLKUdrioo6VAqIPj+k8pLjOh12KTFK3XLvxV6R3X8=
+			L5Um+dwt2GZyUtZulOdZDTcN6WF+WPA4S0MWnoHuIWg=
 			</data>
 		</dict>
 		<key>Modules/module.modulemap</key>

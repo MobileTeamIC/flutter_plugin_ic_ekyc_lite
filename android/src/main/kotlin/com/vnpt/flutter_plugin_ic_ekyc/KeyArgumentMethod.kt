@@ -30,6 +30,9 @@ object KeyArgumentMethod {
     const val ENCRYPT_PUBLIC_KEY = "encrypt_public_key"
     const val MODE_UPLOAD_FILE = "mode_upload_file"
 
+    const val NUMBER_TIMES_RETRY_SCAN_QR_CODE = "number_times_retry_scan_qr_code"
+    const val TIMEOUT_QR_CODE_FLOW = "timeout_qr_code_flow"
+
     /*========== CÁC THUỘC TÍNH VỀ GIẤY TỜ ==========*/
     const val DOCUMENT_TYPE = "document_type"
     const val HASH_FRONT_OCR = "hash_front_ocr"
@@ -149,4 +152,10 @@ object KeyResultConstantsEKYC {
     const val PATH_IMAGE_FACE_NEAR_FULL = "PATH_IMAGE_FACE_NEAR_FULL"
     const val PATH_IMAGE_FACE_SCAN_3D = "PATH_FACE_SCAN3D"
     const val CLIENT_SESSION_RESULT = "CLIENT_SESSION_RESULT"
+
+    // QR Code results
+    const val QR_CODE_RESULT = "QR_CODE_RESULT"
+    const val QR_CODE_RESULT_DETAIL = "QR_CODE_RESULT_DETAIL"
+    const val RETRY_QR_CODE_RESULT = "RETRY_QR_CODE_RESULT"
+    
 }
