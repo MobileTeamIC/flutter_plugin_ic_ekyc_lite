@@ -395,6 +395,7 @@ extension FlutterPluginIcEkycPlugin: ICEkycCameraDelegate {
         // save file
         let pathFaceScan3D = saveDataToDocuments(data: dataScan3D, fileName: "3dScanPortrait", fileExtension: "txt")
         let clientSessionResult = ICEKYCSavedData.shared().clientSessionResult;
+        let pathImageQRCodeFull = ICEKYCSavedData.shared().pathImageQRCodeFull;
 
         
         let dict: [String: Any] = [
@@ -407,6 +408,7 @@ extension FlutterPluginIcEkycPlugin: ICEkycCameraDelegate {
             KeyResultConstantsEKYC.pathImageFaceScan3D: dataScan3D.isEmpty ? "" : pathFaceScan3D?.path ?? "",
             KeyResultConstantsEKYC.clientSessionResult: clientSessionResult,
             KeyResultConstantsEKYC.qrCodeResult: qrCodeResult,
+            KeyResultConstantsEKYC.pathImageQRCodeFull: pathImageQRCodeFull.path,
             KeyResultConstantsEKYC.qrCodeResultDetail: qrCodeResultDetail,
             KeyResultConstantsEKYC.retryQRCodeResult: retryQRCodeResult
         ]
@@ -435,11 +437,13 @@ extension FlutterPluginIcEkycPlugin: ICEkycCameraDelegate {
             let qrCodeResultDetail = ICEKYCSavedData.shared().qrCodeResultDetail;
             let retryQRCodeResult = ICEKYCSavedData.shared().retryQRCodeResult;
             let clientSessionResult = ICEKYCSavedData.shared().clientSessionResult;
+            let pathImageQRCodeFull = ICEKYCSavedData.shared().pathImageQRCodeFull;
 
             
             let dict: [String: Any] = [
                 KeyResultConstantsEKYC.clientSessionResult: clientSessionResult,
                 KeyResultConstantsEKYC.qrCodeResult: qrCodeResult,
+                KeyResultConstantsEKYC.pathImageQRCodeFull: pathImageQRCodeFull,
                 KeyResultConstantsEKYC.qrCodeResultDetail: qrCodeResultDetail,
                 KeyResultConstantsEKYC.retryQRCodeResult: retryQRCodeResult
             ]
