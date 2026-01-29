@@ -58,9 +58,9 @@ android {
     }
 
     dependencies {
-       compileOnly files('libs/ekyc_sdk-release-v3.6.10.aar')
+       compileOnly files('libs/ekyc_sdk-release-v3.6.11.aar')
        compileOnly files('libs/scanqr_ic_sdk-release-v1.0.6.aar')
-        // implementation files('libs/ekyc_sdk-release-v3.6.10.aar')
+        // implementation files('libs/ekyc_sdk-release-v3.6.11.aar')
         // implementation files('libs/scanqr_ic_sdk-release-v1.0.6.aar')
 
         implementation 'androidx.appcompat:appcompat:1.6.1'
