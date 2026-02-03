@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_plugin_ic_ekyc_example/view/ekyc_screen.dart';
-import 'package:flutter_plugin_ic_ekyc_example/view/setting_screen.dart';
+import 'package:flutter_plugin_ic_ekyc_lite_example/view/ekyc_screen.dart';
+import 'package:flutter_plugin_ic_ekyc_lite_example/view/setting_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key, required this.title});

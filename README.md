@@ -1,4 +1,4 @@
-# flutter_plugin_ic_ekyc
+# flutter_plugin_ic_ekyc_lite
 
 A new Flutter plugin project.
 

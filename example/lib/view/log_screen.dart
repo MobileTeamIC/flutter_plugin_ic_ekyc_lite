@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_plugin_ic_ekyc/flutter_plugin_ic_ekyc.dart';
+import 'package:flutter_plugin_ic_ekyc_lite/flutter_plugin_ic_ekyc_lite.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 import '../theme/context.dart';

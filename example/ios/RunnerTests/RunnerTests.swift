@@ -3,7 +3,7 @@ import UIKit
 import XCTest
 
 
-@testable import flutter_plugin_ic_ekyc
+@testable import flutter_plugin_ic_ekyc_lite
 
 // This demonstrates a simple unit test of the Swift portion of this plugin's implementation.
 //
@@ -12,7 +12,7 @@ import XCTest
 class RunnerTests: XCTestCase {
 
   func testGetPlatformVersion() {
-    let plugin = FlutterPluginIcEkycPlugin()
+    let plugin = FlutterPluginIcEkycLitePlugin()
 
     let call = FlutterMethodCall(methodName: "getPlatformVersion", arguments: [])
 

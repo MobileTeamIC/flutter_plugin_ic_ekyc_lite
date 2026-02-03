@@ -3,10 +3,10 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_plugin_ic_ekyc/flutter_plugin_ic_ekyc.dart';
-import 'package:flutter_plugin_ic_ekyc_example/service/shared_preference.dart';
-import 'package:flutter_plugin_ic_ekyc_example/view/log_screen.dart';
-import 'package:flutter_plugin_ic_ekyc_example/view/setting_screen.dart';
+import 'package:flutter_plugin_ic_ekyc_lite/flutter_plugin_ic_ekyc_lite.dart';
+import 'package:flutter_plugin_ic_ekyc_lite_example/service/shared_preference.dart';
+import 'package:flutter_plugin_ic_ekyc_lite_example/view/log_screen.dart';
+import 'package:flutter_plugin_ic_ekyc_lite_example/view/setting_screen.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 import '../theme/context.dart';
@@ -233,7 +233,7 @@ class _EkycScreenState extends State<EkycScreen> {
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
-              Text("eKYC SDK", style: context.textTheme.h1),
+              Text("eKYC Lite SDK", style: context.textTheme.h1),
               const SizedBox(height: 16),
               _ActionCard(
                 icon: Icons.badge,

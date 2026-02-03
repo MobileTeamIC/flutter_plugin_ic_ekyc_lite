@@ -1,0 +1,11 @@
+framework module eKYCLite {
+  umbrella header "eKYCLite.h"
+  export *
+
+  module * { export * }
+}
+
+module eKYCLite.Swift {
+  header "eKYCLite-Swift.h"
+  requires objc
+}

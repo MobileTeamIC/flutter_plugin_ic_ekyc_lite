@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.vnpt.flutter_plugin_ic_ekyc"
+    namespace = "com.vnpt.flutter_plugin_ic_ekyc_lite"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -21,7 +21,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.vnpt.flutter_plugin_ic_ekyc"
+        applicationId = "com.vnpt.flutter_plugin_ic_ekyc_lite"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
@@ -35,7 +35,7 @@ android {
         variant.outputs
             .map { it as com.android.build.gradle.internal.api.BaseVariantOutputImpl }
             .forEach { output ->
-                val outputFileName = "ic-ekyc-example-${variant.versionName}-${variant.versionCode}.apk"
+                val outputFileName = "ic-ekyc-lite-example-${variant.versionName}-${variant.versionCode}.apk"
                 output.outputFileName = outputFileName
             }
     }
@@ -52,7 +52,10 @@ android {
         noCompress += "bic"
     }
 }
-
+dependencies {
+    implementation(files("libs/ekyc_sdk_lite-release-v3.6.11.aar"))
+    implementation(files("libs/scanqr_ic_sdk-release-v1.0.6.aar"))
+}
 flutter {
     source = "../.."
 }

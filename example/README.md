@@ -1,6 +1,6 @@
-# flutter_plugin_ic_ekyc_example
+# flutter_plugin_ic_ekyc_lite_example
 
-Demonstrates how to use the flutter_plugin_ic_ekyc plugin.
+Demonstrates how to use the flutter_plugin_ic_ekyc_lite plugin.
 
 ## Getting Started
 

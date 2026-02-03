@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_plugin_ic_ekyc_example/view/ekyc_screen.dart';
+import 'package:flutter_plugin_ic_ekyc_lite_example/view/ekyc_screen.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -24,7 +24,7 @@ class SampleIntegrateEkycApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ShadApp(
-      title: 'VNPT eKYC SDK',
+      title: 'VNPT eKYC Lite SDK',
       debugShowCheckedModeBanner: false,
       darkTheme: ShadThemeData(
         brightness: Brightness.dark,
@@ -44,7 +44,12 @@ class SampleIntegrateEkycApp extends StatelessWidget {
 }
 
 Future<void> _setupUIConstraints() async {
-  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+    DeviceOrientation.landscapeLeft,
+    DeviceOrientation.landscapeRight,
+  ]);
 
   // Remove deprecated SystemChrome calls for Android 15 compliance
   // Edge-to-edge is now handled in MainActivity.kt

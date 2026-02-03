@@ -1,4 +1,4 @@
-name: flutter_plugin_ic_ekyc
+name: flutter_plugin_ic_ekyc_lite
 description: "A new Flutter plugin project."
 version: 1.0.3
 
@@ -35,10 +35,10 @@ flutter:
   plugin:
     platforms:
       android:
-        package: com.vnpt.flutter_plugin_ic_ekyc
-        pluginClass: FlutterPluginIcEkycPlugin
+        package: com.vnpt.flutter_plugin_ic_ekyc_lite
+        pluginClass: FlutterPluginIcEkycLitePlugin
       ios:
-        pluginClass: FlutterPluginIcEkycPlugin
+        pluginClass: FlutterPluginIcEkycLitePlugin
 
   # To add assets to your plugin package, add an assets section, like this:
   #

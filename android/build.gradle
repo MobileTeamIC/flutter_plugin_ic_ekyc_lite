@@ -1,4 +1,4 @@
-group = "com.vnpt.flutter_plugin_ic_ekyc"
+group = "com.vnpt.flutter_plugin_ic_ekyc_lite"
 version = "1.0-SNAPSHOT"
 
 buildscript {
@@ -25,7 +25,7 @@ apply plugin: "com.android.library"
 apply plugin: "kotlin-android"
 
 android {
-    namespace = "com.vnpt.flutter_plugin_ic_ekyc"
+    namespace = "com.vnpt.flutter_plugin_ic_ekyc_lite"
 
     compileSdk = 36
     ndkVersion = "27.0.12077973"
@@ -60,8 +60,6 @@ android {
     dependencies {
        compileOnly files('libs/ekyc_sdk-release-v3.6.11.aar')
        compileOnly files('libs/scanqr_ic_sdk-release-v1.0.6.aar')
-        // implementation files('libs/ekyc_sdk-release-v3.6.11.aar')
-        // implementation files('libs/scanqr_ic_sdk-release-v1.0.6.aar')
 
         implementation 'androidx.appcompat:appcompat:1.6.1'
         implementation 'androidx.core:core:1.9.0'
