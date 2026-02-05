@@ -22,7 +22,7 @@ dependencies:
 You need to manually copy the SDK library files from the plugin's example directory to your own project:
 1.  Open `/example/android/app/libs/` in the plugin folder.
 2.  Copy all `.aar` files:
-    *   `ekyc_sdk_lite-release-v3.6.11.aar`
+    *   `ekyc_sdk_lite-release-v3.6.12.aar`
     *   `scanqr_ic_sdk-release-v1.0.6.aar`
 3.  Paste them into your project's `android/app/libs/` directory.
 
@@ -31,7 +31,7 @@ In your project's `android/app/build.gradle` (or `build.gradle.kts`), add the fo
 
 ```gradle
 dependencies {
-    implementation(files("libs/ekyc_sdk_lite-release-v3.6.11.aar"))
+    implementation(files("libs/ekyc_sdk_lite-release-v3.6.12.aar"))
     implementation(files("libs/scanqr_ic_sdk-release-v1.0.6.aar"))
 }
 ```
