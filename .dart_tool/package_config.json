@@ -164,7 +164,7 @@
       "languageVersion": "3.5"
     },
     {
-      "name": "flutter_plugin_ic_ekyc",
+      "name": "flutter_plugin_ic_ekyc_lite",
       "rootUri": "../",
       "packageUri": "lib/",
       "languageVersion": "3.7"
