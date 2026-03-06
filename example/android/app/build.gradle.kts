@@ -53,7 +53,7 @@ android {
     }
 }
 dependencies {
-    implementation(files("libs/ekyc_sdk_lite-release-v3.6.13.aar"))
+    implementation(files("libs/ekyc_sdk_lite-release-v3.6.14.aar"))
     implementation(files("libs/scanqr_ic_sdk-release-v1.0.6.aar"))
 }
 flutter {
