@@ -43,7 +43,6 @@ android {
         main.java.srcDirs += "src/main/kotlin"
         test.java.srcDirs += "src/test/kotlin"
     }
-4
     defaultConfig {
         minSdk = 21
     }
