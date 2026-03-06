@@ -20,3 +20,7 @@
 ## 1.0.7
 
 * Bổ sung màn hình hướng dẫn quét mã QR cho luồng tách quét QR (không áp dụng cho luồng xác thực giấy tờ gắn chip)
+
+## 1.0.8
+
+* Fix crash android
