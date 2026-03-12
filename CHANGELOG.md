@@ -24,3 +24,8 @@
 ## 1.0.8
 
 * Fix crash android
+
+## 1.0.9
+
+* Fix timeout qr code ios
+
