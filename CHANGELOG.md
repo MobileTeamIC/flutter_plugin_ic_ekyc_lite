@@ -33,3 +33,21 @@
 
 * Update SDK android version to 1.8.6
 * Vá lỗi bảo mật
+- build.gradle(.kts) module app
+ ```gradle
+ android {
+    ...
+
+    packaging {
+        resources.excludes += '/META-INF/versions/9/OSGI-INF/MANIFEST.MF'
+    }
+ }
+ ```
+ - gradle.properties module app
+ ```
+ android.jetifier.ignorelist=bcprov-jdk18on
+ ```
+
+## 1.0.11
+
+* Downgrade version bouncycastle to 1.78
