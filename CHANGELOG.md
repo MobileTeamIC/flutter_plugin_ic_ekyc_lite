@@ -29,3 +29,7 @@
 
 * Fix timeout qr code ios
 
+## 1.0.10
+
+* Update SDK android version to 1.8.6
+* Vá lỗi bảo mật
