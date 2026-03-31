@@ -51,6 +51,10 @@ android {
     androidResources {
         noCompress += "bic"
     }
+
+    packaging {
+        resources.excludes += "/META-INF/versions/9/OSGI-INF/MANIFEST.MF"
+    }
 }
 dependencies {
     implementation(files("libs/ekyc_sdk_lite-release-v3.6.14.aar"))
