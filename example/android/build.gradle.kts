@@ -2,6 +2,7 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        maven { url = uri("${rootDir}/../../android/local-maven") }
     }
 }
 
