@@ -24,6 +24,10 @@ allprojects {
 apply plugin: "com.android.library"
 apply plugin: "kotlin-android"
 
+repositories {
+    maven { url "${projectDir}/local-maven" }
+}
+
 android {
     namespace = "com.vnpt.flutter_plugin_ic_ekyc_lite"
 
@@ -61,8 +65,8 @@ android {
     }
 
     dependencies {
-       compileOnly files('libs/ekyc_sdk_lite-release-v3.6.14.aar')
-       compileOnly files('libs/scanqr_ic_sdk-release-v1.0.6.aar')
+       implementation 'com.vnpt:ekyc-sdk-lite:3.6.14'
+       implementation 'com.vnpt:scanqr-ic-sdk:1.0.6'
 
         implementation 'androidx.appcompat:appcompat:1.6.1'
         implementation 'androidx.core:core:1.9.0'
