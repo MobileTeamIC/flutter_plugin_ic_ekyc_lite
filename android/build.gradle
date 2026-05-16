@@ -65,8 +65,11 @@ android {
     }
 
     dependencies {
-       implementation 'com.vnpt:ekyc-sdk-lite:3.6.14'
-       implementation 'com.vnpt:scanqr-ic-sdk:1.0.6'
+       // Moved to ekyc_feature DFM — only needed when eKYC flow is active
+       compileOnly 'com.vnpt:ekyc-sdk-lite:3.6.14'
+       compileOnly 'com.vnpt:scanqr-ic-sdk:1.0.6'
+       compileOnly 'me.dm7.barcodescanner:zxing:1.9.8'
+       compileOnly 'com.airbnb.android:lottie:5.0.1'
 
         implementation 'androidx.appcompat:appcompat:1.6.1'
         implementation 'androidx.core:core:1.9.0'
@@ -74,8 +77,6 @@ android {
         implementation 'com.google.code.gson:gson:2.10.1'
         implementation 'com.squareup.okhttp3:okhttp:4.9.0'
         implementation 'org.bouncycastle:bcpkix-jdk18on:1.78'
-        implementation 'me.dm7.barcodescanner:zxing:1.9.8'
-        implementation 'com.airbnb.android:lottie:5.0.1'
         testImplementation("org.jetbrains.kotlin:kotlin-test")
         testImplementation("org.mockito:mockito-core:5.0.0")
     }
