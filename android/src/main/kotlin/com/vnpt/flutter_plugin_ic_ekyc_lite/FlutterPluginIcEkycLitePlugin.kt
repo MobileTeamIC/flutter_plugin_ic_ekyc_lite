@@ -6,12 +6,9 @@ import android.app.Activity
 import android.content.Intent
 import android.text.TextUtils
 import android.util.Log
-import com.vnptit.idg.sdk.activity.VnptFrontActivity
-import com.vnptit.idg.sdk.activity.VnptIdentityActivity
-import com.vnptit.idg.sdk.activity.VnptOcrActivity
-import com.vnptit.idg.sdk.activity.VnptPortraitActivity
-import com.vnptit.idg.sdk.activity.VnptQRCodeActivity
-import com.vnptit.idg.sdk.activity.VnptRearActivity
+// Wrapper classes live in the ekyc_feature DFM; referenced by string name to avoid
+// a compile-time base-app → DFM dependency. Each wrapper calls SplitCompat.installActivity
+// and pre-loads native libs before super.onCreate, fixing the first-launch DFM cold-start crash.
 import com.vnptit.idg.sdk.utils.KeyIntentConstants
 import com.vnptit.idg.sdk.utils.KeyResultConstants
 import com.vnptit.idg.sdk.utils.SDKEnum
@@ -212,11 +209,8 @@ class FlutterPluginIcEkycLitePlugin : FlutterPlugin, ActivityAware ,MethodCallHa
         }
         true
     }
-    // Phương thức thực hiện eKYC luồng "Chụp ảnh giấy tờ"
-    // Bước 1 - chụp ảnh giấy tờ
-    // Bước 2 - hiển thị kết quả
     private fun Activity.getIntentEkycOcr(json: JSONObject): Intent {
-        val intent = getBaseIntent(VnptOcrActivity::class.java, json)
+        val intent = getBaseIntent("vn.vsf.vpay.ekyc.VnptOcrActivityWrapper", json)
 
         // document_type
         intent.putExtra(
@@ -261,7 +255,7 @@ class FlutterPluginIcEkycLitePlugin : FlutterPlugin, ActivityAware ,MethodCallHa
     ///   - language_sdk: Ngôn ngữ SDK ("icekyc_vi", "icekyc_en")
     ///   - is_show_logo: Bật/tắt hiển thị LOGO thương hiệu ("true"/"false")
     private fun Activity.getIntentEkycFull(json: JSONObject): Intent {
-        val intent = getBaseIntent(VnptIdentityActivity::class.java, json)
+        val intent = getBaseIntent("vn.vsf.vpay.ekyc.VnptIdentityActivityWrapper", json)
 
         // document_type
         intent.putExtra(
@@ -332,7 +326,7 @@ class FlutterPluginIcEkycLitePlugin : FlutterPlugin, ActivityAware ,MethodCallHa
     ///   - language_sdk: Ngôn ngữ SDK ("icekyc_vi", "icekyc_en")
     ///   - is_show_logo: Bật/tắt hiển thị LOGO thương hiệu ("true"/"false")
     private fun Activity.getIntentEkycFace(json: JSONObject): Intent {
-        val intent = getBaseIntent(VnptPortraitActivity::class.java, json)
+        val intent = getBaseIntent("vn.vsf.vpay.ekyc.VnptPortraitActivityWrapper", json)
 
         // version_sdk: normal|prooval (map -> Standard|ADVANCED)
         intent.putExtra(
@@ -377,7 +371,7 @@ class FlutterPluginIcEkycLitePlugin : FlutterPlugin, ActivityAware ,MethodCallHa
     ///   - language_sdk: Ngôn ngữ SDK ("icekyc_vi", "icekyc_en")
     ///   - is_show_logo: Bật/tắt hiển thị LOGO thương hiệu ("true"/"false")
     private fun Activity.getIntentEkycOcrFront(json: JSONObject): Intent {
-        val intent = getBaseIntent(VnptFrontActivity::class.java, json)
+        val intent = getBaseIntent("vn.vsf.vpay.ekyc.VnptFrontActivityWrapper", json)
 
         // document_type
         intent.putExtra(
@@ -418,7 +412,7 @@ class FlutterPluginIcEkycLitePlugin : FlutterPlugin, ActivityAware ,MethodCallHa
     ///   - language_sdk: Ngôn ngữ SDK ("icekyc_vi", "icekyc_en")
     ///   - is_show_logo: Bật/tắt hiển thị LOGO thương hiệu ("true"/"false")
     private fun Activity.getIntentEkycOcrBack(json: JSONObject): Intent {
-        val intent = getBaseIntent(VnptRearActivity::class.java, json)
+        val intent = getBaseIntent("vn.vsf.vpay.ekyc.VnptRearActivityWrapper", json)
 
         // document_type
         intent.putExtra(
@@ -459,7 +453,7 @@ class FlutterPluginIcEkycLitePlugin : FlutterPlugin, ActivityAware ,MethodCallHa
     ///   - language_sdk: Ngôn ngữ SDK ("icekyc_vi", "icekyc_en")
     ///   - is_show_logo: Bật/tắt hiển thị LOGO thương hiệu ("true"/"false")
     private fun Activity.getIntentEkycScanQRCode(json: JSONObject): Intent {
-        val intent = getBaseIntent(VnptQRCodeActivity::class.java, json)
+        val intent = getBaseIntent("vn.vsf.vpay.ekyc.VnptQRCodeActivityWrapper", json)
 
         intent.putExtra(
             KeyIntentConstants.NUMBER_TIMES_RETRY_SCAN_QR_CODE,
@@ -474,8 +468,8 @@ class FlutterPluginIcEkycLitePlugin : FlutterPlugin, ActivityAware ,MethodCallHa
     }
 
     ///MARK: BASE INTENT
-    private fun <T : Activity> Activity.getBaseIntent(clazz: Class<T>, json: JSONObject): Intent {
-        val intent = Intent(this, clazz)
+    private fun Activity.getBaseIntent(wrapperClassName: String, json: JSONObject): Intent {
+        val intent = Intent().setClassName(this, wrapperClassName)
 
         // ACCESS_TOKEN
         intent.putExtra(
