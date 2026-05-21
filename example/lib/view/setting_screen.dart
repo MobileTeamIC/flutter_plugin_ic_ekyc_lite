@@ -163,7 +163,7 @@ class _SettingScreenState extends State<SettingScreen> {
       if (mounted) {
         ShadToaster.of(context).show(
           ShadToast(
-            title: Text('Đã lưu cài đặt thành công'),
+            title: const Text('Đã lưu cài đặt thành công'),
             titleStyle: context.textTheme.p.copyWith(color: Colors.white),
             backgroundColor: context.colorScheme.primary,
           ),
@@ -272,11 +272,11 @@ class _SettingScreenState extends State<SettingScreen> {
                             options: [
                               ShadOption(
                                 value: LanguageSdk.icekyc_vi.name,
-                                child: Text('Tiếng Việt'),
+                                child: const Text('Tiếng Việt'),
                               ),
                               ShadOption(
                                 value: LanguageSdk.icekyc_en.name,
-                                child: Text('Tiếng Anh'),
+                                child: const Text('Tiếng Anh'),
                               ),
                             ],
                           ),
@@ -358,7 +358,7 @@ class _SettingScreenState extends State<SettingScreen> {
     );
   }
 
-  _titleAndTextFormField({
+  Widget _titleAndTextFormField({
     required String id,
     required String title,
     required String placeholder,
@@ -368,31 +368,36 @@ class _SettingScreenState extends State<SettingScreen> {
     if (isTextArea) {
       return ShadTextareaFormField(
         id: id,
-        label: Text(title),
+        label: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(title),
+            Row(
+              spacing: 8,
+              children: [
+                ShadIconButton(
+                  backgroundColor: context.colorScheme.cardForeground,
+                  width: 32,
+                  height: 32,
+                  onPressed: () => _handlePaste(context, controller),
+                  icon: const Icon(LucideIcons.clipboardPaste),
+                ),
+                ShadIconButton(
+                  backgroundColor: context.colorScheme.cardForeground,
+                  width: 32,
+                  height: 32,
+                  onPressed: () => _handleCopy(controller.text),
+                  icon: const Icon(LucideIcons.copy),
+                ),
+              ],
+            ),
+          ],
+        ),
         resizable: true,
         maxHeight: 400,
         minHeight: 100,
         placeholder: Text(placeholder),
         controller: controller,
-        trailing: Row(
-          spacing: 8,
-          children: [
-            ShadIconButton(
-              backgroundColor: context.colorScheme.cardForeground,
-              width: 32,
-              height: 32,
-              onPressed: () => _handlePaste(context, controller),
-              icon: const Icon(LucideIcons.clipboardPaste),
-            ),
-            ShadIconButton(
-              backgroundColor: context.colorScheme.cardForeground,
-              width: 32,
-              height: 32,
-              onPressed: () => _handleCopy(controller.text),
-              icon: const Icon(LucideIcons.copy),
-            ),
-          ],
-        ),
       );
     } else {
       return ShadInputFormField(
@@ -423,7 +428,7 @@ class _SettingScreenState extends State<SettingScreen> {
     }
   }
 
-  _titleAndWidget(String title, Widget widget) {
+  Widget _titleAndWidget(String title, Widget widget) {
     return Column(
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.start,
@@ -436,7 +441,7 @@ class _SettingScreenState extends State<SettingScreen> {
     );
   }
 
-  _titleAndNumberFormField({
+  Widget _titleAndNumberFormField({
     required String id,
     required String title,
     required String placeholder,
@@ -455,25 +460,25 @@ class _SettingScreenState extends State<SettingScreen> {
   }
 
   //handle
-  _handleCopy(String text) {
+  void _handleCopy(String text) {
     Clipboard.setData(ClipboardData(text: text));
     ShadToaster.of(context).show(
       ShadToast(
-        title: Text('Đã copy vào clipboard'),
+        title: const Text('Đã copy vào clipboard'),
         titleStyle: context.textTheme.p.copyWith(color: Colors.white),
         backgroundColor: context.colorScheme.primary,
       ),
     );
   }
 
-  _handlePaste(BuildContext context, TextEditingController controller) async {
+  Future<void> _handlePaste(BuildContext context, TextEditingController controller) async {
     final clipboard = await Clipboard.getData(Clipboard.kTextPlain);
     if (clipboard != null) {
       controller.text = clipboard.text ?? '';
       if (context.mounted) {
         ShadToaster.of(context).show(
           ShadToast(
-            title: Text('Đã paste vào clipboard'),
+            title: const Text('Đã paste vào clipboard'),
             titleStyle: context.textTheme.p.copyWith(color: Colors.white),
             backgroundColor: context.colorScheme.primary,
           ),

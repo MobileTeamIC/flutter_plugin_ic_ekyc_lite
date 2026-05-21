@@ -51,3 +51,8 @@
 ## 1.0.11
 
 * Downgrade version bouncycastle to 1.78
+
+## 1.0.12
+
+* Lower iOS deployment target to 12.0
+* Set Flutter SDK version to 3.29.3
