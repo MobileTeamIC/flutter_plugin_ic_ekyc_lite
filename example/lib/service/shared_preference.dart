@@ -103,4 +103,6 @@ class SharedPreferenceKeys {
   // QR Code configuration
   static const String numberTimesRetryScanQRCode = 'number_times_retry_scan_qrcode';
   static const String timeoutQRCodeFlow = 'timeout_qrcode_flow';
+
+  static const String isEnableWaterMark = 'is_enable_watermark';
 }

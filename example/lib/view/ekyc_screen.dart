@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -26,6 +25,7 @@ class _EkycScreenState extends State<EkycScreen> {
   LanguageSdk _language = LanguageSdk.icekyc_vi;
   ModeButtonHeaderBar _modeButtonHeaderBar = ModeButtonHeaderBar.leftButton;
   bool _isShowLogo = false;
+  bool _isEnableWaterMark = true;
   int? _numberTimesRetryScanQRCode;
   int? _timeoutQRCodeFlow;
 
@@ -66,6 +66,10 @@ class _EkycScreenState extends State<EkycScreen> {
       SharedPreferenceKeys.isShowLogo,
       defaultValue: false,
     );
+    _isEnableWaterMark = SharedPreferenceService.instance.getBool(
+      SharedPreferenceKeys.isEnableWaterMark,
+      defaultValue: true,
+    );
     
     // QR Code configuration: pass null directly to SDK if not set
     _numberTimesRetryScanQRCode = SharedPreferenceService.instance.getInt(
@@ -102,6 +106,7 @@ class _EkycScreenState extends State<EkycScreen> {
         versionSdk: VersionSdk.proOval,
         checkLivenessFace: LivenessFaceMode.standard,
         validateDocumentType: ValidateDocumentType.basic,
+        isEnableWaterMark: _isEnableWaterMark,
       );
       _navigate(await ICEkyc.instance.startEkycFull(config));
     } on PlatformException catch (e) {
@@ -125,6 +130,7 @@ class _EkycScreenState extends State<EkycScreen> {
         isShowLogo: _isShowLogo,
         documentType: DocumentType.identityCard,
         validateDocumentType: ValidateDocumentType.basic,
+        isEnableWaterMark: _isEnableWaterMark,
       );
       _navigate(await ICEkyc.instance.startEkycOcr(config));
     } on PlatformException catch (e) {
@@ -144,6 +150,7 @@ class _EkycScreenState extends State<EkycScreen> {
         isShowLogo: _isShowLogo,
         documentType: DocumentType.identityCard,
         validateDocumentType: ValidateDocumentType.basic,
+        isEnableWaterMark: _isEnableWaterMark,
       );
       _navigate(await ICEkyc.instance.startEkycOcrFront(config));
     } on PlatformException catch (e) {
@@ -166,6 +173,7 @@ class _EkycScreenState extends State<EkycScreen> {
         isShowLogo: _isShowLogo,
         versionSdk: VersionSdk.proOval,
         checkLivenessFace: LivenessFaceMode.standard,
+        isEnableWaterMark: _isEnableWaterMark,
       );
       _navigate(await ICEkyc.instance.startEkycFace(config));
     } on PlatformException catch (e) {

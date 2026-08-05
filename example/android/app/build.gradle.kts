@@ -57,7 +57,7 @@ android {
     }
 }
 dependencies {
-    implementation("com.vnpt:ekyc-sdk-lite:3.6.14")
+    implementation("com.vnpt:ekyc-sdk-lite:3.7.2")
     implementation("com.vnpt:scanqr-ic-sdk:1.0.6")
 }
 flutter {

@@ -26,6 +26,7 @@ class _SettingScreenState extends State<SettingScreen> {
   LanguageSdk _languageMode = LanguageSdk.icekyc_vi;
   ModeButtonHeaderBar _modeButtonHeaderBar = ModeButtonHeaderBar.leftButton;
   bool _isShowLogo = false;
+  bool _isEnableWaterMark = true;
 
   @override
   void initState() {
@@ -64,6 +65,10 @@ class _SettingScreenState extends State<SettingScreen> {
     _isShowLogo = SharedPreferenceService.instance.getBool(
       SharedPreferenceKeys.isShowLogo,
       defaultValue: false,
+    );
+    _isEnableWaterMark = SharedPreferenceService.instance.getBool(
+      SharedPreferenceKeys.isEnableWaterMark,
+      defaultValue: true,
     );
     
     // QR Code configuration: null means not set
@@ -126,6 +131,10 @@ class _SettingScreenState extends State<SettingScreen> {
         SharedPreferenceService.instance.setBool(
           SharedPreferenceKeys.isShowLogo,
           _isShowLogo,
+        ),
+        SharedPreferenceService.instance.setBool(
+          SharedPreferenceKeys.isEnableWaterMark,
+          _isEnableWaterMark,
         ),
       ]);
       
@@ -218,6 +227,19 @@ class _SettingScreenState extends State<SettingScreen> {
                             ShadSwitch(
                               value: _isShowLogo,
                               onChanged: (v) => setState(() => _isShowLogo = v),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              'Bật Watermark',
+                              style: context.textTheme.large,
+                            ),
+                            Spacer(),
+                            ShadSwitch(
+                              value: _isEnableWaterMark,
+                              onChanged: (v) => setState(() => _isEnableWaterMark = v),
                             ),
                           ],
                         ),
