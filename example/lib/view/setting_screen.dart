@@ -27,6 +27,7 @@ class _SettingScreenState extends State<SettingScreen> {
   ModeButtonHeaderBar _modeButtonHeaderBar = ModeButtonHeaderBar.leftButton;
   bool _isShowLogo = false;
   bool _isEnableWaterMark = true;
+  bool _isTurnOffCallService = true;
 
   @override
   void initState() {
@@ -68,6 +69,10 @@ class _SettingScreenState extends State<SettingScreen> {
     );
     _isEnableWaterMark = SharedPreferenceService.instance.getBool(
       SharedPreferenceKeys.isEnableWaterMark,
+      defaultValue: true,
+    );
+    _isTurnOffCallService = SharedPreferenceService.instance.getBool(
+      SharedPreferenceKeys.isTurnOffCallService,
       defaultValue: true,
     );
     
@@ -135,6 +140,10 @@ class _SettingScreenState extends State<SettingScreen> {
         SharedPreferenceService.instance.setBool(
           SharedPreferenceKeys.isEnableWaterMark,
           _isEnableWaterMark,
+        ),
+        SharedPreferenceService.instance.setBool(
+          SharedPreferenceKeys.isTurnOffCallService,
+          _isTurnOffCallService,
         ),
       ]);
       
@@ -240,6 +249,19 @@ class _SettingScreenState extends State<SettingScreen> {
                             ShadSwitch(
                               value: _isEnableWaterMark,
                               onChanged: (v) => setState(() => _isEnableWaterMark = v),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              'Tắt Call Service',
+                              style: context.textTheme.large,
+                            ),
+                            Spacer(),
+                            ShadSwitch(
+                              value: _isTurnOffCallService,
+                              onChanged: (v) => setState(() => _isTurnOffCallService = v),
                             ),
                           ],
                         ),

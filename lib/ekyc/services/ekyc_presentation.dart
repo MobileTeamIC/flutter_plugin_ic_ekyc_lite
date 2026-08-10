@@ -207,6 +207,7 @@ class ICEkycPresets {
     bool isEnableGotIt = true,
     LanguageSdk languageSdk = LanguageSdk.icekyc_vi,
     bool isShowLogo = false,
+    bool isTurnOffCallService = true,
     ModeButtonHeaderBar modeButtonHeaderBar = ModeButtonHeaderBar.leftButton,
     bool isEnableWaterMark = false,
   }) => ICEkycConfig(
@@ -222,6 +223,7 @@ class ICEkycPresets {
     isEnableGotIt: isEnableGotIt,
     languageSdk: languageSdk,
     isShowLogo: isShowLogo,
+    isTurnOffCallService: isTurnOffCallService,
     modeButtonHeaderBar: modeButtonHeaderBar,
     isEnableWaterMark: isEnableWaterMark,
   );

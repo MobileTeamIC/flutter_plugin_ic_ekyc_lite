@@ -105,4 +105,5 @@ class SharedPreferenceKeys {
   static const String timeoutQRCodeFlow = 'timeout_qrcode_flow';
 
   static const String isEnableWaterMark = 'is_enable_watermark';
+  static const String isTurnOffCallService = 'is_turn_off_call_service';
 }
