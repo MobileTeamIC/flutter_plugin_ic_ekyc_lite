@@ -56,3 +56,8 @@
 
 * Lower iOS deployment target to 12.0
 * Set Flutter SDK version to 3.29.3
+
+## 1.0.13
+
+* Bổ sung cấu hình `isTurnOffCallService` cho dịch vụ eKYC và màn hình cài đặt.
+* Tích hợp hỗ trợ Watermark và cập nhật phiên bản SDK eKYC và scanQR.
