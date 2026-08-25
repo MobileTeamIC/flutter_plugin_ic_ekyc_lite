@@ -51,3 +51,13 @@
 ## 1.0.11
 
 * Downgrade version bouncycastle to 1.78
+
+## 1.0.12
+
+* Lower iOS deployment target to 12.0
+* Set Flutter SDK version to 3.29.3
+
+## 1.0.13
+
+* Bổ sung cấu hình `isTurnOffCallService` cho dịch vụ eKYC và màn hình cài đặt.
+* Tích hợp hỗ trợ Watermark và cập nhật phiên bản SDK Android mới (`ekyc_sdk_lite-release-v3.7.2.aar` và `scanqr_ic_sdk-release-v1.0.6.aar`).

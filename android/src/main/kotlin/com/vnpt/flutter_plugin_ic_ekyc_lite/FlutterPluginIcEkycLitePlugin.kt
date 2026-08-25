@@ -566,6 +566,12 @@ class FlutterPluginIcEkycLitePlugin : FlutterPlugin, ActivityAware ,MethodCallHa
         // time_out_call_api
         intent.putExtra(KeyIntentConstants.TIMEOUT_CALL_API, json.optInt(KeyArgumentMethod.TIMEOUT_CALL_API, 20))
 
+        // is_enable_water_mark
+        intent.putExtra(KeyIntentConstants.IS_ENABLE_WATERMARK, json.optBoolean(KeyArgumentMethod.IS_ENABLE_WATER_MARK, false))
+
+        // is_add_metadata_image
+        intent.putExtra(KeyIntentConstants.IS_ADD_METADATA_IMAGE, json.optBoolean(KeyArgumentMethod.IS_ADD_METADATA_IMAGE, false))
+
         return intent
     }
 

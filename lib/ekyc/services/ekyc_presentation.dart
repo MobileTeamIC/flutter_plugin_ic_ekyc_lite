@@ -28,6 +28,7 @@ class ICEkycPresets {
     ModeButtonHeaderBar modeButtonHeaderBar = ModeButtonHeaderBar.leftButton,
     int? numberTimesRetryScanQRCode,
     int? timeoutQRCodeFlow,
+    bool isEnableWaterMark = false
   }) => ICEkycConfig(
     accessToken: accessToken,
     tokenId: tokenId,
@@ -52,6 +53,7 @@ class ICEkycPresets {
     modeButtonHeaderBar: modeButtonHeaderBar,
     numberTimesRetryScanQRCode: numberTimesRetryScanQRCode,
     timeoutQRCodeFlow: timeoutQRCodeFlow,
+    isEnableWaterMark: isEnableWaterMark,
   );
 
   /// Create configuration for OCR only flow
@@ -75,6 +77,7 @@ class ICEkycPresets {
     ModeButtonHeaderBar modeButtonHeaderBar = ModeButtonHeaderBar.leftButton,
     int? numberTimesRetryScanQRCode,
     int? timeoutQRCodeFlow,
+    bool isEnableWaterMark = false,
   }) => ICEkycConfig(
     accessToken: accessToken,
     tokenId: tokenId,
@@ -93,6 +96,9 @@ class ICEkycPresets {
     isShowQRCodeResult: isShowQRCodeResult,
     challengeCode: challengeCode,
     modeButtonHeaderBar: modeButtonHeaderBar,
+    numberTimesRetryScanQRCode: numberTimesRetryScanQRCode,
+    timeoutQRCodeFlow: timeoutQRCodeFlow,
+    isEnableWaterMark: isEnableWaterMark,
   );
 
   //MARK: - OCR FONT
@@ -138,6 +144,7 @@ class ICEkycPresets {
     bool isShowQRCodeResult = false,
     String challengeCode = '',
     ModeButtonHeaderBar modeButtonHeaderBar = ModeButtonHeaderBar.leftButton,
+    bool isEnableWaterMark = false,
   }) => ICEkycConfig(
     accessToken: accessToken,
     tokenId: tokenId,
@@ -156,6 +163,7 @@ class ICEkycPresets {
     isShowQRCodeResult: isShowQRCodeResult,
     challengeCode: challengeCode,
     modeButtonHeaderBar: modeButtonHeaderBar,
+    isEnableWaterMark: isEnableWaterMark,
   );
 
   //MARK: - ORC BACK
@@ -199,7 +207,9 @@ class ICEkycPresets {
     bool isEnableGotIt = true,
     LanguageSdk languageSdk = LanguageSdk.icekyc_vi,
     bool isShowLogo = false,
+    bool isTurnOffCallService = true,
     ModeButtonHeaderBar modeButtonHeaderBar = ModeButtonHeaderBar.leftButton,
+    bool isEnableWaterMark = false,
   }) => ICEkycConfig(
     accessToken: accessToken,
     tokenId: tokenId,
@@ -213,7 +223,9 @@ class ICEkycPresets {
     isEnableGotIt: isEnableGotIt,
     languageSdk: languageSdk,
     isShowLogo: isShowLogo,
+    isTurnOffCallService: isTurnOffCallService,
     modeButtonHeaderBar: modeButtonHeaderBar,
+    isEnableWaterMark: isEnableWaterMark,
   );
 
   //MARK: - FACE
@@ -262,6 +274,7 @@ class ICEkycPresets {
     VersionSdk versionSdk = VersionSdk.proOval,
     String challengeCode = '',
     ModeButtonHeaderBar modeButtonHeaderBar = ModeButtonHeaderBar.leftButton,
+    bool isEnableWaterMark = false,
   }) => ICEkycConfig(
     accessToken: accessToken,
     tokenId: tokenId,
@@ -278,6 +291,7 @@ class ICEkycPresets {
     isShowQRCodeResult: isShowQRCodeResult,
     challengeCode: challengeCode,
     modeButtonHeaderBar: modeButtonHeaderBar,
+    isEnableWaterMark: isEnableWaterMark,
   );
 
   //MARK: - SCANQR CODE

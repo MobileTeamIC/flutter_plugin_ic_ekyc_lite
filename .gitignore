@@ -1,3 +1,5 @@
 
 # FVM Version Cache
 .fvm/
+/plans/
+store_assets/

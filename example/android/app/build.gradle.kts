@@ -57,8 +57,8 @@ android {
     }
 }
 dependencies {
-    implementation(files("libs/ekyc_sdk_lite-release-v3.6.14.aar"))
-    implementation(files("libs/scanqr_ic_sdk-release-v1.0.6.aar"))
+    implementation("com.vnpt:ekyc-sdk-lite:3.7.2")
+    implementation("com.vnpt:scanqr-ic-sdk:1.0.6")
 }
 flutter {
     source = "../.."
