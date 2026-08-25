@@ -61,3 +61,7 @@
 
 * Bổ sung cấu hình `isTurnOffCallService` cho dịch vụ eKYC và màn hình cài đặt.
 * Tích hợp hỗ trợ Watermark và cập nhật phiên bản SDK Android mới (`ekyc_sdk_lite-release-v3.7.2.aar` và `scanqr_ic_sdk-release-v1.0.6.aar`).
+
+## 1.0.14
+
+* Cập nhật SDK Android eKYC Lite lên phiên bản 3.7.4 (`ekyc_sdk_lite-release-v3.7.4.aar`).

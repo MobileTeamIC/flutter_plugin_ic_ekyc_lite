@@ -35,7 +35,7 @@ android {
         variant.outputs
             .map { it as com.android.build.gradle.internal.api.BaseVariantOutputImpl }
             .forEach { output ->
-                val outputFileName = "ic-ekyc-lite-example-${variant.versionName}-${variant.versionCode}.apk"
+                val outputFileName = "vnptai-ekyc-lite-flutter-${variant.versionName}-${variant.versionCode}.apk"
                 output.outputFileName = outputFileName
             }
     }
@@ -57,7 +57,7 @@ android {
     }
 }
 dependencies {
-    implementation("com.vnpt:ekyc-sdk-lite:3.7.2")
+    implementation("com.vnpt:ekyc-sdk-lite:3.7.4")
     implementation("com.vnpt:scanqr-ic-sdk:1.0.6")
 }
 flutter {
