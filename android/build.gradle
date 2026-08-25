@@ -65,7 +65,7 @@ android {
     }
 
     dependencies {
-        implementation 'com.vnpt:ekyc-sdk-lite:3.7.2'
+        implementation 'com.vnpt:ekyc-sdk-lite:3.7.4'
         implementation 'com.vnpt:scanqr-ic-sdk:1.0.6'
 
         implementation 'androidx.appcompat:appcompat:1.6.1'
