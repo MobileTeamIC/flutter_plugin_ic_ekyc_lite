@@ -4,12 +4,13 @@ Tài liệu này hướng dẫn cách sử dụng script `release.sh` để tự
 
 ## Quy trình Release
 
-Script `release.sh` sẽ thực hiện các bước sau:
-1. `git add .`: Thêm toàn bộ thay đổi.
-2. `git commit`: Tạo commit với thông báo `chore: release [VERSION]`.
-3. `git push`: Đẩy code lên nhánh hiện tại.
-4. Quản lý Tag: Xóa tag cũ (nếu trùng) và tạo tag mới.
-5. `git push origin [VERSION]`: Đẩy tag lên GitHub.
+Script `release.sh` sẽ tự động thực hiện các bước sau:
+1. **Tự động đồng bộ Version**: Tự động chuẩn hóa và cập nhật số version vào `ICEKYCLite.podspec` và `pubspec.yaml`.
+2. `git add .`: Thêm toàn bộ thay đổi.
+3. `git commit`: Tạo commit với thông báo `chore: release [VERSION]`.
+4. `git push`: Đẩy code lên nhánh hiện tại.
+5. **Quản lý Tag**: Xóa tag cũ (nếu trùng) và tạo tag mới `v[VERSION]`.
+6. `git push origin [VERSION]`: Đẩy tag lên GitHub.
 
 ## Cách sử dụng
 
@@ -23,7 +24,7 @@ chmod +x release.sh
 
 ### 2. Chạy script release
 
-Sử dụng lệnh sau để bắt đầu quy trình release:
+Sử dụng lệnh sau để bắt đầu quy trình release (hỗ trợ cả định dạng `v1.0.14` hoặc `1.0.14`):
 
 ```bash
 ./release.sh [VERSION]
@@ -32,11 +33,13 @@ Sử dụng lệnh sau để bắt đầu quy trình release:
 **Ví dụ:**
 
 ```bash
-./release.sh v1.1.0
+./release.sh v1.0.14
+# hoặc
+./release.sh 1.0.14
 ```
 
 ## Lưu ý quan trọng
 
 - Đảm bảo bạn đang ở đúng nhánh muốn release (ví dụ: `main` hoặc `master`).
-- Đảm bảo đã cập nhật phiên bản trong file `pubspec.yaml` trước khi chạy script này.
+- Script sẽ **tự động đồng bộ version** vào file `ICEKYCLite.podspec` (dành cho iOS Native CocoaPods) và `pubspec.yaml`.
 - Sau khi script chạy xong, bạn nên lên GitHub để tạo **Release Note** từ tag vừa mới push lên.
