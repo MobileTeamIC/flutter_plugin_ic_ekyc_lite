@@ -65,5 +65,8 @@
 ## 1.0.14
 
 * Cập nhật SDK Android eKYC Lite lên phiên bản 3.7.4 (`ekyc_sdk_lite-release-v3.7.4.aar`).
+
+## 1.0.15
+
 * Bổ sung root `ICEKYCLite.podspec` hỗ trợ ứng dụng iOS Native tích hợp module Flutter qua CocoaPods (`ICSdkEKYC.xcframework`, `eKYCLite.xcframework`).
 * Nâng cấp script `release.sh` tự động đồng bộ version vào `ICEKYCLite.podspec` và `pubspec.yaml`.
