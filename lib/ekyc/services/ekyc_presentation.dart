@@ -1,9 +1,40 @@
 import 'ekyc_config.dart';
 import 'enum_ekyc.dart';
 
-/// Predefined configurations for common use cases
+/// Cấu hình định sẵn (Presets) cho các luồng sử dụng eKYC phổ biến
 class ICEkycPresets {
-  /// Create default configuration for full eKYC flow
+  // MARK: - FULL EKYC
+  /// Tạo cấu hình cho luồng eKYC đầy đủ (Full eKYC).
+  ///
+  /// Bao gồm các bước: Chụp giấy tờ tùy thân (mặt trước & mặt sau), OCR trích xuất thông tin,
+  /// và xác thực khuôn mặt (Face Verification) kết hợp kiểm tra tính sống (Liveness detection).
+  ///
+  /// * [accessToken]: Mã truy cập eKYC được cấp từ Dashboard.
+  /// * [tokenId]: Token ID từ eKYC Dashboard.
+  /// * [tokenKey]: Token Key từ eKYC Dashboard.
+  /// * [changeBaseUrl]: Đường dẫn API tùy chỉnh (nếu có).
+  /// * [documentType]: Loại giấy tờ tùy thân (mặc định [DocumentType.identityCard]).
+  /// * [validateDocumentType]: Chế độ kiểm tra tính hợp lệ của giấy tờ (mặc định [ValidateDocumentType.basic]).
+  /// * [versionSdk]: Phiên bản SDK cho giao diện chụp ảnh chân dung (mặc định [VersionSdk.proOval]).
+  /// * [checkLivenessFace]: Chế độ kiểm tra khuôn mặt sống (mặc định [LivenessFaceMode.noneCheckFace]).
+  /// * [isShowTutorial]: Hiển thị màn hình hướng dẫn trước khi chụp.
+  /// * [isEnableCompare]: Bật/tắt so sánh ảnh chân dung với ảnh trên giấy tờ.
+  /// * [isCheckMaskedFace]: Bật/tắt kiểm tra che mặt / đeo khẩu trang.
+  /// * [isCheckLivenessCard]: Bật/tắt kiểm tra giấy tờ chụp trực tiếp (chống chụp lại qua màn hình).
+  /// * [isValidatePostcode]: Bật/tắt kiểm tra mã bưu chính / mã tỉnh thành.
+  /// * [isEnableGotIt]: Bật/tắt nút "Bỏ qua hướng dẫn".
+  /// * [languageSdk]: Ngôn ngữ hiển thị trong SDK ([LanguageSdk.icekyc_vi] hoặc [LanguageSdk.icekyc_en]).
+  /// * [isShowLogo]: Bật/tắt hiển thị logo thương hiệu trong màn hình eKYC.
+  /// * [isTurnOffCallService]: Bật/tắt tự động gọi service của SDK sau khi chụp.
+  /// * [isEnableScanQRCode]: Bật/tắt tính năng quét mã QR trên giấy tờ.
+  /// * [isShowQRCodeResult]: Hiển thị kết quả quét mã QR sau khi quét.
+  /// * [challengeCode]: Mã xác thực ngẫu nhiên từ hệ thống.
+  /// * [modeButtonHeaderBar]: Vị trí nút điều hướng trên thanh header ([ModeButtonHeaderBar.leftButton] hoặc [ModeButtonHeaderBar.rightButton]).
+  /// * [numberTimesRetryScanQRCode]: Số lần thử lại quét mã QR nếu thất bại.
+  /// * [timeoutQRCodeFlow]: Thời gian timeout cho luồng quét mã QR (giây).
+  /// * [isEnableWaterMark]: Bật/tắt chèn hình mờ (watermark) vào ảnh chụp.
+  /// * [compressionQualityImageIos]: Hệ số nén ảnh trên iOS từ `0.0` đến `1.0` (mặc định SDK iOS: `0.6`).
+  /// * [cameraQualityImageAndroid]: Chất lượng ảnh chụp trên Android từ `40` đến `100` (mặc định SDK Android: `80`).
   static ICEkycConfig fullEkyc({
     String accessToken = '',
     String tokenId = '',
@@ -28,7 +59,9 @@ class ICEkycPresets {
     ModeButtonHeaderBar modeButtonHeaderBar = ModeButtonHeaderBar.leftButton,
     int? numberTimesRetryScanQRCode,
     int? timeoutQRCodeFlow,
-    bool isEnableWaterMark = false
+    bool isEnableWaterMark = false,
+    double? compressionQualityImageIos,
+    int? cameraQualityImageAndroid,
   }) => ICEkycConfig(
     accessToken: accessToken,
     tokenId: tokenId,
@@ -54,9 +87,38 @@ class ICEkycPresets {
     numberTimesRetryScanQRCode: numberTimesRetryScanQRCode,
     timeoutQRCodeFlow: timeoutQRCodeFlow,
     isEnableWaterMark: isEnableWaterMark,
+    compressionQualityImageIos: compressionQualityImageIos,
+    cameraQualityImageAndroid: cameraQualityImageAndroid,
   );
 
-  /// Create configuration for OCR only flow
+  // MARK: - OCR ONLY
+  /// Tạo cấu hình cho luồng chỉ đọc giấy tờ hai mặt (OCR Only).
+  ///
+  /// Bao gồm các bước: Chụp mặt trước và mặt sau của giấy tờ tùy thân,
+  /// sau đó trích xuất thông tin giấy tờ mà không thực hiện xác thực khuôn mặt.
+  ///
+  /// * [accessToken]: Mã truy cập eKYC được cấp từ Dashboard.
+  /// * [tokenId]: Token ID từ eKYC Dashboard.
+  /// * [tokenKey]: Token Key từ eKYC Dashboard.
+  /// * [documentType]: Loại giấy tờ tùy thân (mặc định [DocumentType.identityCard]).
+  /// * [changeBaseUrl]: Đường dẫn API tùy chỉnh (nếu có).
+  /// * [isShowTutorial]: Hiển thị màn hình hướng dẫn trước khi chụp.
+  /// * [isCheckLivenessCard]: Bật/tắt kiểm tra giấy tờ chụp trực tiếp.
+  /// * [validateDocumentType]: Chế độ kiểm tra tính hợp lệ của giấy tờ.
+  /// * [isValidatePostcode]: Bật/tắt kiểm tra mã bưu chính / mã tỉnh thành.
+  /// * [isEnableGotIt]: Bật/tắt nút "Bỏ qua hướng dẫn".
+  /// * [languageSdk]: Ngôn ngữ hiển thị trong SDK.
+  /// * [isShowLogo]: Bật/tắt hiển thị logo thương hiệu.
+  /// * [isTurnOffCallService]: Bật/tắt tự động gọi service của SDK sau khi chụp.
+  /// * [isEnableScanQRCode]: Bật/tắt tính năng quét mã QR trên giấy tờ.
+  /// * [isShowQRCodeResult]: Hiển thị kết quả quét mã QR sau khi quét.
+  /// * [challengeCode]: Mã xác thực ngẫu nhiên từ hệ thống.
+  /// * [modeButtonHeaderBar]: Vị trí nút điều hướng trên thanh header.
+  /// * [numberTimesRetryScanQRCode]: Số lần thử lại quét mã QR nếu thất bại.
+  /// * [timeoutQRCodeFlow]: Thời gian timeout cho luồng quét mã QR (giây).
+  /// * [isEnableWaterMark]: Bật/tắt chèn hình mờ (watermark) vào ảnh chụp.
+  /// * [compressionQualityImageIos]: Hệ số nén ảnh trên iOS từ `0.0` đến `1.0` (mặc định SDK iOS: `0.6`).
+  /// * [cameraQualityImageAndroid]: Chất lượng ảnh chụp trên Android từ `40` đến `100` (mặc định SDK Android: `80`).
   static ICEkycConfig ocrOnly({
     String accessToken = '',
     String tokenId = '',
@@ -78,6 +140,8 @@ class ICEkycPresets {
     int? numberTimesRetryScanQRCode,
     int? timeoutQRCodeFlow,
     bool isEnableWaterMark = false,
+    double? compressionQualityImageIos,
+    int? cameraQualityImageAndroid,
   }) => ICEkycConfig(
     accessToken: accessToken,
     tokenId: tokenId,
@@ -99,33 +163,35 @@ class ICEkycPresets {
     numberTimesRetryScanQRCode: numberTimesRetryScanQRCode,
     timeoutQRCodeFlow: timeoutQRCodeFlow,
     isEnableWaterMark: isEnableWaterMark,
+    compressionQualityImageIos: compressionQualityImageIos,
+    cameraQualityImageAndroid: cameraQualityImageAndroid,
   );
 
-  //MARK: - OCR FONT
-  /// Luồng chỉ thực hiện đọc giấy tờ chỉ mặt trước: OCR Front
+  // MARK: - OCR FRONT
+  /// Tạo cấu hình cho luồng chỉ đọc mặt trước giấy tờ (OCR Front).
   ///
-  /// Thực hiện OCR giấy tờ một bước: chụp mặt trước giấy tờ
+  /// Chỉ chụp và trích xuất thông tin từ mặt trước của giấy tờ tùy thân.
   ///
-  /// - Parameters:
-  ///   - controller: Root view controller để present eKYC SDK
-  ///   - info: Dictionary chứa các thông số cấu hình eKYC
-  ///
-  /// - Required Parameters (info):
-  ///   - access_token: Mã truy cập từ eKYC admin dashboard
-  ///   - token_id: Token ID từ eKYC admin dashboard
-  ///   - token_key: Token key từ eKYC admin dashboard
-  ///
-  /// - Optional Parameters (info):
-  ///   - flow_type: Loại luồng thực hiện ("ocrfront", "none", "scanqr", "ocrback", "ocr", "full", "face")
-  ///   - document_type: Loại giấy tờ ("identitycard", "idcardchipbased", "passport", "driverlicense", "militaryidcard")
-  ///   - is_show_tutorial: Hiển thị màn hình hướng dẫn ("true"/"false")
-  ///   - is_check_liveness_card: Bật/tắt chức năng kiểm tra ảnh giấy tờ chụp trực tiếp ("true"/"false")
-  ///   - validate_document_type: Chế độ kiểm tra ảnh giấy tờ ("none", "basic", "medium", "advance")
-  ///   - change_base_url: Đường dẫn API tùy chỉnh
-  ///   - is_enable_gotit: Bật/tắt nút "Bỏ qua hướng dẫn" ("true"/"false")
-  ///   - language_sdk: Ngôn ngữ SDK ("icekyc_vi", "icekyc_en")
-  ///   - is_show_logo: Bật/tắt hiển thị LOGO thương hiệu ("true"/"false")
-  /// Create configuration for OCR front side only flow
+  /// * [accessToken]: Mã truy cập eKYC được cấp từ Dashboard.
+  /// * [tokenId]: Token ID từ eKYC Dashboard.
+  /// * [tokenKey]: Token Key từ eKYC Dashboard.
+  /// * [documentType]: Loại giấy tờ tùy thân (mặc định [DocumentType.identityCard]).
+  /// * [changeBaseUrl]: Đường dẫn API tùy chỉnh (nếu có).
+  /// * [isShowTutorial]: Hiển thị màn hình hướng dẫn trước khi chụp.
+  /// * [isCheckLivenessCard]: Bật/tắt kiểm tra giấy tờ chụp trực tiếp.
+  /// * [validateDocumentType]: Chế độ kiểm tra tính hợp lệ của giấy tờ.
+  /// * [isValidatePostcode]: Bật/tắt kiểm tra mã bưu chính / mã tỉnh thành.
+  /// * [isEnableGotIt]: Bật/tắt nút "Bỏ qua hướng dẫn".
+  /// * [languageSdk]: Ngôn ngữ hiển thị trong SDK.
+  /// * [isShowLogo]: Bật/tắt hiển thị logo thương hiệu.
+  /// * [isTurnOffCallService]: Bật/tắt tự động gọi service của SDK sau khi chụp.
+  /// * [isEnableScanQRCode]: Bật/tắt tính năng quét mã QR trên giấy tờ.
+  /// * [isShowQRCodeResult]: Hiển thị kết quả quét mã QR sau khi quét.
+  /// * [challengeCode]: Mã xác thực ngẫu nhiên từ hệ thống.
+  /// * [modeButtonHeaderBar]: Vị trí nút điều hướng trên thanh header.
+  /// * [isEnableWaterMark]: Bật/tắt chèn hình mờ (watermark) vào ảnh chụp.
+  /// * [compressionQualityImageIos]: Hệ số nén ảnh trên iOS từ `0.0` đến `1.0` (mặc định SDK iOS: `0.6`).
+  /// * [cameraQualityImageAndroid]: Chất lượng ảnh chụp trên Android từ `40` đến `100` (mặc định SDK Android: `80`).
   static ICEkycConfig ocrFront({
     String accessToken = '',
     String tokenId = '',
@@ -145,6 +211,8 @@ class ICEkycPresets {
     String challengeCode = '',
     ModeButtonHeaderBar modeButtonHeaderBar = ModeButtonHeaderBar.leftButton,
     bool isEnableWaterMark = false,
+    double? compressionQualityImageIos,
+    int? cameraQualityImageAndroid,
   }) => ICEkycConfig(
     accessToken: accessToken,
     tokenId: tokenId,
@@ -164,35 +232,34 @@ class ICEkycPresets {
     challengeCode: challengeCode,
     modeButtonHeaderBar: modeButtonHeaderBar,
     isEnableWaterMark: isEnableWaterMark,
+    compressionQualityImageIos: compressionQualityImageIos,
+    cameraQualityImageAndroid: cameraQualityImageAndroid,
   );
 
-  //MARK: - ORC BACK
-  /// Luồng chỉ thực hiện đọc giấy tờ chỉ mặt sau: OCR Back
+  // MARK: - OCR BACK
+  /// Tạo cấu hình cho luồng chỉ đọc mặt sau giấy tờ (OCR Back).
   ///
-  /// Thực hiện OCR giấy tờ một bước: chụp mặt sau giấy tờ
+  /// Chỉ chụp và trích xuất thông tin từ mặt sau của giấy tờ tùy thân.
+  /// Thường dùng sau khi đã chụp mặt trước và nhận được [hashFrontOcr].
   ///
-  /// - Parameters:
-  ///   - controller: Root view controller để present eKYC SDK
-  ///   - info: Dictionary chứa các thông số cấu hình eKYC
-  ///
-  /// - Required Parameters (info):
-  ///   - access_token: Mã truy cập từ eKYC admin dashboard
-  ///   - token_id: Token ID từ eKYC admin dashboard
-  ///   - token_key: Token key từ eKYC admin dashboard
-  ///
-  /// - Optional Parameters (info):
-  ///   - flow_type: Loại luồng thực hiện ("ocrback", "none", "scanqr", "ocrfront", "ocr", "full", "face")
-  ///   - document_type: Loại giấy tờ ("identitycard", "idcardchipbased", "passport", "driverlicense", "militaryidcard")
-  ///   - is_show_tutorial: Hiển thị màn hình hướng dẫn ("true"/"false")
-  ///   - hash_front_ocr: Hash của kết quả OCR mặt trước (bắt buộc cho ocrback)
-  ///   - is_check_liveness_card: Bật/tắt chức năng kiểm tra ảnh giấy tờ chụp trực tiếp ("true"/"false")
-  ///   - validate_document_type: Chế độ kiểm tra ảnh giấy tờ ("none", "basic", "medium", "advance")
-  ///   - is_validate_postcode: Bật/tắt chức năng kiểm tra mã bưu điện ("true"/"false")
-  ///   - change_base_url: Đường dẫn API tùy chỉnh
-  ///   - is_enable_gotit: Bật/tắt nút "Bỏ qua hướng dẫn" ("true"/"false")
-  ///   - language_sdk: Ngôn ngữ SDK ("icekyc_vi", "icekyc_en")
-  ///   - is_show_logo: Bật/tắt hiển thị LOGO thương hiệu ("true"/"false")
-  /// Create configuration for OCR back side only flow
+  /// * [accessToken]: Mã truy cập eKYC được cấp từ Dashboard.
+  /// * [tokenId]: Token ID từ eKYC Dashboard.
+  /// * [tokenKey]: Token Key từ eKYC Dashboard.
+  /// * [hashFrontOcr]: Mã băm kết quả OCR mặt trước trả về từ bước trước đó.
+  /// * [documentType]: Loại giấy tờ tùy thân (mặc định [DocumentType.identityCard]).
+  /// * [changeBaseUrl]: Đường dẫn API tùy chỉnh (nếu có).
+  /// * [isShowTutorial]: Hiển thị màn hình hướng dẫn trước khi chụp.
+  /// * [isCheckLivenessCard]: Bật/tắt kiểm tra giấy tờ chụp trực tiếp.
+  /// * [validateDocumentType]: Chế độ kiểm tra tính hợp lệ của giấy tờ.
+  /// * [isValidatePostcode]: Bật/tắt kiểm tra mã bưu chính / mã tỉnh thành.
+  /// * [isEnableGotIt]: Bật/tắt nút "Bỏ qua hướng dẫn".
+  /// * [languageSdk]: Ngôn ngữ hiển thị trong SDK.
+  /// * [isShowLogo]: Bật/tắt hiển thị logo thương hiệu.
+  /// * [isTurnOffCallService]: Bật/tắt tự động gọi service của SDK sau khi chụp.
+  /// * [modeButtonHeaderBar]: Vị trí nút điều hướng trên thanh header.
+  /// * [isEnableWaterMark]: Bật/tắt chèn hình mờ (watermark) vào ảnh chụp.
+  /// * [compressionQualityImageIos]: Hệ số nén ảnh trên iOS từ `0.0` đến `1.0` (mặc định SDK iOS: `0.6`).
+  /// * [cameraQualityImageAndroid]: Chất lượng ảnh chụp trên Android từ `40` đến `100` (mặc định SDK Android: `80`).
   static ICEkycConfig ocrBack({
     String accessToken = '',
     String tokenId = '',
@@ -210,6 +277,8 @@ class ICEkycPresets {
     bool isTurnOffCallService = true,
     ModeButtonHeaderBar modeButtonHeaderBar = ModeButtonHeaderBar.leftButton,
     bool isEnableWaterMark = false,
+    double? compressionQualityImageIos,
+    int? cameraQualityImageAndroid,
   }) => ICEkycConfig(
     accessToken: accessToken,
     tokenId: tokenId,
@@ -226,34 +295,38 @@ class ICEkycPresets {
     isTurnOffCallService: isTurnOffCallService,
     modeButtonHeaderBar: modeButtonHeaderBar,
     isEnableWaterMark: isEnableWaterMark,
+    compressionQualityImageIos: compressionQualityImageIos,
+    cameraQualityImageAndroid: cameraQualityImageAndroid,
   );
 
-  //MARK: - FACE
-  /// Luồng chỉ thực hiện xác thực khuôn mặt: Face Verification
+  // MARK: - FACE VERIFICATION
+  /// Tạo cấu hình cho luồng chỉ xác thực khuôn mặt (Face Verification).
   ///
-  /// Thực hiện chụp ảnh Oval xa gần và thực hiện các chức năng tùy vào cấu hình: Compare, Verify, Mask, Liveness Face
+  /// Thực hiện chụp ảnh chân dung theo khung Oval (xa/gần) và xác thực khuôn mặt
+  /// kết hợp kiểm tra tính sống (Liveness detection), chống giả mạo mặt nạ/ảnh in.
   ///
-  /// - Parameters:
-  ///   - controller: Root view controller để present eKYC SDK
-  ///   - info: Dictionary chứa các thông số cấu hình eKYC
-  ///
-  /// - Required Parameters (info):
-  ///   - access_token: Mã truy cập từ eKYC admin dashboard
-  ///   - token_id: Token ID từ eKYC admin dashboard
-  ///   - token_key: Token key từ eKYC admin dashboard
-  ///
-  /// - Optional Parameters (info):
-  ///   - flow_type: Loại luồng thực hiện ("face", "none", "scanqr", "ocrfront", "ocrback", "ocr", "full")
-  ///   - version_sdk: Phiên bản SDK cho chụp ảnh chân dung ("normal", "prooval")
-  ///   - is_show_tutorial: Hiển thị màn hình hướng dẫn ("true"/"false")
-  ///   - is_enable_compare: Bật/tắt chức năng so sánh ảnh chân dung ("true"/"false")
-  ///   - is_check_masked_face: Bật/tắt chức năng kiểm tra che mặt ("true"/"false")
-  ///   - check_liveness_face: Chức năng kiểm tra ảnh chân dung chụp trực tiếp ("nonecheckface", "ibeta", "standard")
-  ///   - change_base_url: Đường dẫn API tùy chỉnh
-  ///   - is_enable_gotit: Bật/tắt nút "Bỏ qua hướng dẫn" ("true"/"false")
-  ///   - language_sdk: Ngôn ngữ SDK ("icekyc_vi", "icekyc_en")
-  ///   - is_show_logo: Bật/tắt hiển thị LOGO thương hiệu ("true"/"false")
-  /// Create configuration for face verification only
+  /// * [accessToken]: Mã truy cập eKYC được cấp từ Dashboard.
+  /// * [tokenId]: Token ID từ eKYC Dashboard.
+  /// * [tokenKey]: Token Key từ eKYC Dashboard.
+  /// * [documentType]: Loại giấy tờ tùy thân.
+  /// * [isShowTutorial]: Hiển thị màn hình hướng dẫn trước khi chụp.
+  /// * [isCheckLivenessCard]: Bật/tắt kiểm tra giấy tờ chụp trực tiếp.
+  /// * [isCheckMaskedFace]: Bật/tắt kiểm tra che mặt / đeo khẩu trang.
+  /// * [checkLivenessFace]: Chế độ kiểm tra khuôn mặt sống ([LivenessFaceMode.noneCheckFace], [LivenessFaceMode.ibeta], [LivenessFaceMode.standard]).
+  /// * [validateDocumentType]: Chế độ kiểm tra tính hợp lệ của giấy tờ.
+  /// * [isValidatePostcode]: Bật/tắt kiểm tra mã bưu chính / mã tỉnh thành.
+  /// * [isEnableGotIt]: Bật/tắt nút "Bỏ qua hướng dẫn".
+  /// * [languageSdk]: Ngôn ngữ hiển thị trong SDK.
+  /// * [isShowLogo]: Bật/tắt hiển thị logo thương hiệu.
+  /// * [isTurnOffCallService]: Bật/tắt tự động gọi service của SDK sau khi chụp.
+  /// * [isEnableScanQRCode]: Bật/tắt tính năng quét mã QR.
+  /// * [isShowQRCodeResult]: Hiển thị kết quả quét mã QR.
+  /// * [versionSdk]: Phiên bản SDK cho giao diện chụp ảnh chân dung ([VersionSdk.proOval] hoặc [VersionSdk.normal]).
+  /// * [challengeCode]: Mã xác thực ngẫu nhiên từ hệ thống.
+  /// * [modeButtonHeaderBar]: Vị trí nút điều hướng trên thanh header.
+  /// * [isEnableWaterMark]: Bật/tắt chèn hình mờ (watermark) vào ảnh chụp.
+  /// * [compressionQualityImageIos]: Hệ số nén ảnh trên iOS từ `0.0` đến `1.0` (mặc định SDK iOS: `0.6`).
+  /// * [cameraQualityImageAndroid]: Chất lượng ảnh chụp trên Android từ `40` đến `100` (mặc định SDK Android: `80`).
   static ICEkycConfig faceVerification({
     String accessToken = '',
     String tokenId = '',
@@ -275,6 +348,8 @@ class ICEkycPresets {
     String challengeCode = '',
     ModeButtonHeaderBar modeButtonHeaderBar = ModeButtonHeaderBar.leftButton,
     bool isEnableWaterMark = false,
+    double? compressionQualityImageIos,
+    int? cameraQualityImageAndroid,
   }) => ICEkycConfig(
     accessToken: accessToken,
     tokenId: tokenId,
@@ -292,31 +367,26 @@ class ICEkycPresets {
     challengeCode: challengeCode,
     modeButtonHeaderBar: modeButtonHeaderBar,
     isEnableWaterMark: isEnableWaterMark,
+    compressionQualityImageIos: compressionQualityImageIos,
+    cameraQualityImageAndroid: cameraQualityImageAndroid,
   );
 
-  //MARK: - SCANQR CODE
-  /// Luồng chỉ thực hiện quét QR code: Scan QR Code
+  // MARK: - SCAN QR CODE
+  /// Tạo cấu hình cho luồng chỉ quét mã QR (Scan QR Code).
   ///
-  /// Thực hiện quét QR code để lấy thông tin từ QR code
+  /// Mở camera chuyên dụng để quét mã QR trên thẻ CCCD gắn chip hoặc các giấy tờ có mã QR.
   ///
-  /// - Parameters:
-  ///   - controller: Root view controller để present eKYC SDK
-  ///   - info: Dictionary chứa các thông số cấu hình eKYC
-  ///
-  /// - Required Parameters (info):
-  ///   - access_token: Mã truy cập từ eKYC admin dashboard
-  ///   - token_id: Token ID từ eKYC admin dashboard
-  ///   - token_key: Token key từ eKYC admin dashboard
-  ///
-  /// - Optional Parameters (info):
-  ///   - is_show_tutorial: Hiển thị màn hình hướng dẫn ("true"/"false")
-  ///   - is_enable_gotit: Bật/tắt nút "Bỏ qua hướng dẫn" ("true"/"false")
-  ///   - language_sdk: Ngôn ngữ SDK ("icekyc_vi", "icekyc_en")
-  ///   - is_show_logo: Bật/tắt hiển thị LOGO thương hiệu ("true"/"false")
-  ///   - mode_button_header_bar: Kiểu nút trong header bar ("left_button", "right_button")
-  ///   - number_times_retry_scan_qr_code: Số lần thử quét QR code
-  ///   - timeout_qr_code_flow: Thời gian timeout cho luồng quét QR code
-  /// Create configuration for scan QR code flow
+  /// * [accessToken]: Mã truy cập eKYC được cấp từ Dashboard.
+  /// * [tokenId]: Token ID từ eKYC Dashboard.
+  /// * [tokenKey]: Token Key từ eKYC Dashboard.
+  /// * [isShowTutorial]: Hiển thị màn hình hướng dẫn trước khi quét.
+  /// * [isEnableGotIt]: Bật/tắt nút "Bỏ qua hướng dẫn".
+  /// * [isTurnOffCallService]: Bật/tắt tự động gọi service của SDK sau khi quét.
+  /// * [languageSdk]: Ngôn ngữ hiển thị trong SDK.
+  /// * [isShowLogo]: Bật/tắt hiển thị logo thương hiệu.
+  /// * [modeButtonHeaderBar]: Vị trí nút điều hướng trên thanh header.
+  /// * [numberTimesRetryScanQRCode]: Số lần cho phép người dùng thử lại quét QR nếu quét thất bại.
+  /// * [timeoutQRCodeFlow]: Thời gian đếm ngược giới hạn luồng quét QR (giây).
   static ICEkycConfig scanQRCode({
     required String accessToken,
     required String tokenId,

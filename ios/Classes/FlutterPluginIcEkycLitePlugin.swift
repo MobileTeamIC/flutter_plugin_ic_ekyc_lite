@@ -251,7 +251,10 @@ extension FlutterPluginIcEkycLitePlugin {
         ekycVC.zoomCamera = args[KeyArgumentMethod.zoomCamera] as? Double ?? 0.0
         ekycVC.expiresTime = args[KeyArgumentMethod.expiresTime] as? Int ?? 0
         ekycVC.isTurnOffCallService = args[KeyArgumentMethod.isTurnOffCallService] as? Bool ?? false
-        ekycVC.compressionQualityImage = args[KeyArgumentMethod.compressionQualityImage] as? Double ?? 0.0
+        let qualityIos = (args[KeyArgumentMethod.compressionQualityImageIos] as? Double)
+            ?? (args[KeyArgumentMethod.compressionQualityImage] as? Double)
+            ?? 0.6
+        ekycVC.compressionQualityImage = CGFloat(max(0.0, min(1.0, qualityIos)))
         ekycVC.isEnableAutoBrightness = args[KeyArgumentMethod.isEnableAutoBrightness] as? Bool ?? false
         ekycVC.screenBrightness = args[KeyArgumentMethod.screenBrightness] as? Double ?? 0.0
         ekycVC.isSkipPreview = args[KeyArgumentMethod.isSkipPreview] as? Bool ?? false

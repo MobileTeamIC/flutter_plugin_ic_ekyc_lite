@@ -23,6 +23,7 @@ object KeyArgumentMethod {
     const val EXPIRES_TIME = "expires_time"
     const val IS_TURN_OFF_CALL_SERVICE = "is_turn_off_call_service"
     const val COMPRESSION_QUALITY_IMAGE = "compression_quality_image"
+    const val CAMERA_QUALITY_IMAGE_ANDROID = "camera_quality_image_android"
     const val IS_ENABLE_AUTO_BRIGHTNESS = "is_enable_auto_brightness"
     const val SCREEN_BRIGHTNESS = "screen_brightness"
     const val IS_SKIP_PREVIEW = "is_skip_preview"

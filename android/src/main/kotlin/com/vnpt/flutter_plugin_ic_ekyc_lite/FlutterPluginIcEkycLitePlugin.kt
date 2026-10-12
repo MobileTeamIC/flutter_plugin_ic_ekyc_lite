@@ -548,6 +548,17 @@ class FlutterPluginIcEkycLitePlugin : FlutterPlugin, ActivityAware ,MethodCallHa
         // zoom_camera
         intent.putExtra(KeyIntentConstants.ZOOM_CAMERA, json.optDouble(KeyArgumentMethod.ZOOM_CAMERA, 0.0))
 
+        // camera_quality_image_android (40 -> 100, default 80)
+        if (json.has(KeyArgumentMethod.CAMERA_QUALITY_IMAGE_ANDROID)) {
+            val quality = json.optInt(KeyArgumentMethod.CAMERA_QUALITY_IMAGE_ANDROID, 80)
+            intent.putExtra(KeyIntentConstants.CAMERA_QUALITY_IMAGE, quality.coerceIn(40, 100))
+        } else if (json.has(KeyArgumentMethod.COMPRESSION_QUALITY_IMAGE)) {
+            // Fallback nếu truyền key cũ compression_quality_image
+            val raw = json.optDouble(KeyArgumentMethod.COMPRESSION_QUALITY_IMAGE, 80.0)
+            val qualityInt = if (raw in 0.01..1.0) (raw * 100).toInt() else raw.toInt()
+            intent.putExtra(KeyIntentConstants.CAMERA_QUALITY_IMAGE, qualityInt.coerceIn(40, 100))
+        }
+
         // is_enable_auto_brightness
         intent.putExtra(KeyIntentConstants.IS_ENABLE_AUTO_BRIGHTNESS, json.optBoolean(KeyArgumentMethod.IS_ENABLE_AUTO_BRIGHTNESS, false))
 

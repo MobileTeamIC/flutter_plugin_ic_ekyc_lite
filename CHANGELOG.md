@@ -70,3 +70,10 @@
 
 * Bổ sung root `ICEKYCLite.podspec` hỗ trợ ứng dụng iOS Native tích hợp module Flutter qua CocoaPods (`ICSdkEKYC.xcframework`, `eKYCLite.xcframework`).
 * Nâng cấp script `release.sh` tự động đồng bộ version vào `ICEKYCLite.podspec` và `pubspec.yaml`.
+
+## 1.0.16
+
+* Bổ sung cấu hình chất lượng ảnh `compressionQualityImageIos` (iOS: 0.0 - 1.0) và `cameraQualityImageAndroid` (Android: 40 - 100) trên `ICEkycConfig` và `ICEkycPresets`.
+* Chuẩn hóa toàn bộ DartDoc comments theo tiêu chuẩn Effective Dart cho `ICEkycConfig` và `ICEkycPresets`.
+* Hiển thị dung lượng ảnh chụp (KB) trên màn hình kết quả của ứng dụng mẫu (`example`) để kiểm tra nén ảnh trên cả Android và iOS.
+* Cập nhật màn hình cài đặt trong `example` cho phép tùy chỉnh cấu hình nén ảnh.

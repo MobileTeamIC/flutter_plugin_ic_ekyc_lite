@@ -55,12 +55,12 @@ class SharedPreferenceService {
     return _sharedPreferences.getBool(key) ?? defaultValue;
   }
 
-  /// Lưu List<String>
+  /// Lưu `List<String>`
   Future<bool> setStringList(String key, List<String> value) async {
     return await _sharedPreferences.setStringList(key, value);
   }
 
-  /// Đọc List<String>
+  /// Đọc `List<String>`
   List<String>? getStringList(String key) {
     return _sharedPreferences.getStringList(key);
   }
@@ -106,4 +106,8 @@ class SharedPreferenceKeys {
 
   static const String isEnableWaterMark = 'is_enable_watermark';
   static const String isTurnOffCallService = 'is_turn_off_call_service';
+
+  // Image compression configuration
+  static const String compressionQualityImageIos = 'compression_quality_image_ios';
+  static const String cameraQualityImageAndroid = 'camera_quality_image_android';
 }

@@ -29,6 +29,8 @@ class _EkycScreenState extends State<EkycScreen> {
   bool _isTurnOffCallService = true;
   int? _numberTimesRetryScanQRCode;
   int? _timeoutQRCodeFlow;
+  double? _compressionQualityImageIos;
+  int? _cameraQualityImageAndroid;
 
   @override
   void initState() {
@@ -83,6 +85,12 @@ class _EkycScreenState extends State<EkycScreen> {
     _timeoutQRCodeFlow = SharedPreferenceService.instance.getInt(
       SharedPreferenceKeys.timeoutQRCodeFlow,
     );
+    _compressionQualityImageIos = SharedPreferenceService.instance.getDouble(
+      SharedPreferenceKeys.compressionQualityImageIos,
+    );
+    _cameraQualityImageAndroid = SharedPreferenceService.instance.getInt(
+      SharedPreferenceKeys.cameraQualityImageAndroid,
+    );
   }
 
   /// Navigate to Log Screen
@@ -112,6 +120,8 @@ class _EkycScreenState extends State<EkycScreen> {
         validateDocumentType: ValidateDocumentType.basic,
         isEnableWaterMark: _isEnableWaterMark,
         isTurnOffCallService: _isTurnOffCallService,
+        compressionQualityImageIos: _compressionQualityImageIos,
+        cameraQualityImageAndroid: _cameraQualityImageAndroid,
       );
       _navigate(await ICEkyc.instance.startEkycFull(config));
     } on PlatformException catch (e) {
@@ -137,6 +147,8 @@ class _EkycScreenState extends State<EkycScreen> {
         validateDocumentType: ValidateDocumentType.basic,
         isEnableWaterMark: _isEnableWaterMark,
         isTurnOffCallService: _isTurnOffCallService,
+        compressionQualityImageIos: _compressionQualityImageIos,
+        cameraQualityImageAndroid: _cameraQualityImageAndroid,
       );
       _navigate(await ICEkyc.instance.startEkycOcr(config));
     } on PlatformException catch (e) {
@@ -158,6 +170,8 @@ class _EkycScreenState extends State<EkycScreen> {
         validateDocumentType: ValidateDocumentType.basic,
         isEnableWaterMark: _isEnableWaterMark,
         isTurnOffCallService: _isTurnOffCallService,
+        compressionQualityImageIos: _compressionQualityImageIos,
+        cameraQualityImageAndroid: _cameraQualityImageAndroid,
       );
       _navigate(await ICEkyc.instance.startEkycOcrFront(config));
     } on PlatformException catch (e) {
@@ -182,6 +196,8 @@ class _EkycScreenState extends State<EkycScreen> {
         checkLivenessFace: LivenessFaceMode.standard,
         isEnableWaterMark: _isEnableWaterMark,
         isTurnOffCallService: _isTurnOffCallService,
+        compressionQualityImageIos: _compressionQualityImageIos,
+        cameraQualityImageAndroid: _cameraQualityImageAndroid,
       );
       _navigate(await ICEkyc.instance.startEkycFace(config));
     } on PlatformException catch (e) {

@@ -21,6 +21,8 @@ class _SettingScreenState extends State<SettingScreen> {
   final TextEditingController _baseUrlController = TextEditingController();
   final TextEditingController _numberTimesRetryScanQRCodeController = TextEditingController();
   final TextEditingController _timeoutQRCodeFlowController = TextEditingController();
+  final TextEditingController _compressionQualityImageIosController = TextEditingController();
+  final TextEditingController _cameraQualityImageAndroidController = TextEditingController();
   bool _isLoading = false;
 
   LanguageSdk _languageMode = LanguageSdk.icekyc_vi;
@@ -86,6 +88,17 @@ class _SettingScreenState extends State<SettingScreen> {
       SharedPreferenceKeys.timeoutQRCodeFlow,
     );
     _timeoutQRCodeFlowController.text = timeout?.toString() ?? '';
+
+    // Image compression configuration
+    final iosQuality = SharedPreferenceService.instance.getDouble(
+      SharedPreferenceKeys.compressionQualityImageIos,
+    );
+    _compressionQualityImageIosController.text = iosQuality?.toString() ?? '';
+
+    final androidQuality = SharedPreferenceService.instance.getInt(
+      SharedPreferenceKeys.cameraQualityImageAndroid,
+    );
+    _cameraQualityImageAndroidController.text = androidQuality?.toString() ?? '';
   }
 
   @override
@@ -96,6 +109,8 @@ class _SettingScreenState extends State<SettingScreen> {
     _baseUrlController.dispose();
     _numberTimesRetryScanQRCodeController.dispose();
     _timeoutQRCodeFlowController.dispose();
+    _compressionQualityImageIosController.dispose();
+    _cameraQualityImageAndroidController.dispose();
     super.dispose();
   }
 
@@ -174,6 +189,37 @@ class _SettingScreenState extends State<SettingScreen> {
           await SharedPreferenceService.instance.setInt(
             SharedPreferenceKeys.timeoutQRCodeFlow,
             timeoutValue,
+          );
+        }
+      }
+
+      // Handle Image compression configuration: save null by removing key if empty
+      final iosQualityText = _compressionQualityImageIosController.text.trim();
+      if (iosQualityText.isEmpty) {
+        await SharedPreferenceService.instance.remove(
+          SharedPreferenceKeys.compressionQualityImageIos,
+        );
+      } else {
+        final iosQualityValue = double.tryParse(iosQualityText);
+        if (iosQualityValue != null) {
+          await SharedPreferenceService.instance.setDouble(
+            SharedPreferenceKeys.compressionQualityImageIos,
+            iosQualityValue,
+          );
+        }
+      }
+
+      final androidQualityText = _cameraQualityImageAndroidController.text.trim();
+      if (androidQualityText.isEmpty) {
+        await SharedPreferenceService.instance.remove(
+          SharedPreferenceKeys.cameraQualityImageAndroid,
+        );
+      } else {
+        final androidQualityValue = int.tryParse(androidQualityText);
+        if (androidQualityValue != null) {
+          await SharedPreferenceService.instance.setInt(
+            SharedPreferenceKeys.cameraQualityImageAndroid,
+            androidQualityValue,
           );
         }
       }
@@ -373,6 +419,37 @@ class _SettingScreenState extends State<SettingScreen> {
                           placeholder: 'Để trống để dùng mặc định SDK',
                           controller: _timeoutQRCodeFlowController,
                         ),
+
+                        // Image compression quality
+                        _titleAndDecimalFormField(
+                          id: 'compression_quality_image_ios',
+                          title: 'Chất lượng nén ảnh iOS (0.0 - 1.0)',
+                          placeholder: 'Để trống để dùng mặc định SDK (0.6)',
+                          controller: _compressionQualityImageIosController,
+                          validator: (v) {
+                            if (v.trim().isEmpty) return null;
+                            final val = double.tryParse(v.trim());
+                            if (val == null || val < 0.0 || val > 1.0) {
+                              return 'Hệ số iOS phải nằm trong khoảng 0.0 - 1.0';
+                            }
+                            return null;
+                          },
+                        ),
+
+                        _titleAndNumberFormField(
+                          id: 'camera_quality_image_android',
+                          title: 'Chất lượng nén ảnh Android (40 - 100)',
+                          placeholder: 'Để trống để dùng mặc định SDK (80)',
+                          controller: _cameraQualityImageAndroidController,
+                          validator: (v) {
+                            if (v.trim().isEmpty) return null;
+                            final val = int.tryParse(v.trim());
+                            if (val == null || val < 40 || val > 100) {
+                              return 'Hệ số Android phải nằm trong khoảng 40 - 100';
+                            }
+                            return null;
+                          },
+                        ),
                       ],
                     ),
                   ),
@@ -490,6 +567,7 @@ class _SettingScreenState extends State<SettingScreen> {
     required String title,
     required String placeholder,
     required TextEditingController controller,
+    String? Function(String)? validator,
   }) {
     return ShadInputFormField(
       id: id,
@@ -500,6 +578,27 @@ class _SettingScreenState extends State<SettingScreen> {
       inputFormatters: [
         FilteringTextInputFormatter.allow(RegExp(r'^-?\d*')), // Allow negative numbers
       ],
+      validator: validator,
+    );
+  }
+
+  Widget _titleAndDecimalFormField({
+    required String id,
+    required String title,
+    required String placeholder,
+    required TextEditingController controller,
+    String? Function(String)? validator,
+  }) {
+    return ShadInputFormField(
+      id: id,
+      label: Text(title),
+      placeholder: Text(placeholder),
+      controller: controller,
+      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      inputFormatters: [
+        FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
+      ],
+      validator: validator,
     );
   }
 

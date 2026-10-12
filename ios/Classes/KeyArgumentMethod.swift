@@ -23,6 +23,7 @@ struct KeyArgumentMethod {
     static let expiresTime = "expires_time"
     static let isTurnOffCallService = "is_turn_off_call_service"
     static let compressionQualityImage = "compression_quality_image"
+    static let compressionQualityImageIos = "compression_quality_image_ios"
     static let isEnableAutoBrightness = "is_enable_auto_brightness"
     static let screenBrightness = "screen_brightness"
     static let isSkipPreview = "is_skip_preview"

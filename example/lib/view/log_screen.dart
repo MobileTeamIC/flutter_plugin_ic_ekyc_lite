@@ -228,16 +228,32 @@ class _LogScreenState extends State<LogScreen> {
       return const SizedBox.shrink();
     }
 
+    final sizeText = _formatFileSize(imageBytes.lengthInBytes);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Text(
-            label,
-            style: Theme.of(
-              context,
-            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.alphabetic,
+            children: [
+              Text(
+                label,
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                '($sizeText)',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Colors.grey,
+                  fontSize: 13,
+                ),
+              ),
+            ],
           ),
         ),
         Image.memory(
@@ -251,6 +267,16 @@ class _LogScreenState extends State<LogScreen> {
         const SizedBox(height: 16),
       ],
     );
+  }
+
+  String _formatFileSize(int bytes) {
+    if (bytes < 1024) {
+      return '$bytes B';
+    } else if (bytes < 1024 * 1024) {
+      return '${(bytes / 1024).toStringAsFixed(1)} KB';
+    } else {
+      return '${(bytes / (1024 * 1024)).toStringAsFixed(2)} MB';
+    }
   }
 
   Future<void> _copyToClipboard(BuildContext context, String? content) async {
